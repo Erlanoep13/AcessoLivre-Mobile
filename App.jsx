@@ -1,47 +1,30 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native'; // Adicionei ScrollView de volta
-import { AdditionRequests } from './src/pages/Admin/AdditionRequests';
-import { Footer } from './src/components/Footer';
-import { ExplicaçõesGerais } from './src/components/ExplicaçoesGerais';
-import { Navbar } from './src/components/Navbar';
+import { View, StyleSheet } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+// Importe as páginas que acabamos de criar
+import { LoginPage } from './src/pages/User/LoginPage';
+import { AddRequestPage } from './src/pages/Admin/AddRequestPage';
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      
-      <ExplicaçõesGerais />
-      
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+    <SafeAreaProvider>
+      <View style={styles.container}>
         
-        <View style={styles.mainContent}>
-           <AdditionRequests />
-        </View>
-
-        <Footer />
+        {/* --- TESTE AQUI --- */}
+        {/* Descomente a linha da página que você quer ver */}
         
-      </ScrollView>
+        {/* <LoginPage /> */}
+        <AddRequestPage />
 
-      <Navbar />
-      <AdditionRequests />
-      <Footer />
-      
-    </View>
+      </View>
+    </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1e4e28',
+    backgroundColor: '#fff',
   },
-  scrollContent: {
-    flexGrow: 1, // Faz a área de rolagem ocupar toda a altura disponível
-    justifyContent: 'space-between', // Separa o topo do rodapé
-  },
-  mainContent: {
-    flex: 1, // Garante que o conteúdo ocupe espaço
-    paddingTop: 80, // DÁ UM ESPAÇO para o botão flutuante não ficar em cima do texto
-    paddingHorizontal: 10,
-  }
 });
