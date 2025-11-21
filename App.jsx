@@ -3,11 +3,12 @@ import { View, StyleSheet, ScrollView } from 'react-native'; // Adicionei Scroll
 import { AdditionRequests } from './src/pages/Admin/AdditionRequests';
 import { Footer } from './src/components/Footer';
 import { ExplicaçõesGerais } from './src/components/ExplicaçoesGerais';
+import { Navbar } from './src/components/Navbar';
+
 
 export default function App() {
   return (
     <View style={styles.container}>
-      
       
       <ExplicaçõesGerais />
       
@@ -20,6 +21,10 @@ export default function App() {
         <Footer />
         
       </ScrollView>
+
+      <Navbar />
+      <AdditionRequests />
+      <Footer />
       
     </View>
   );
