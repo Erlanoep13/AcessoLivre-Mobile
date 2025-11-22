@@ -3,14 +3,14 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
-export function RequestCard({ 
-  userName, 
-  placeName, 
-  address, 
-  accessibilityType, 
-  description, 
-  onAccept, 
-  onRefuse 
+export function RequestCard({
+  userName,
+  placeName,
+  address,
+  accessibilityType,
+  description,
+  onAccept,
+  onRefuse
 }) {
   return (
     <View style={styles.card}>
@@ -22,11 +22,11 @@ export function RequestCard({
       {/* Corpo do Card */}
       <Text style={styles.placeName}>{placeName}</Text>
       <Text style={styles.address}>{address}</Text>
-      
+
       <Text style={styles.label}>
         Tipo: <Text style={styles.value}>{accessibilityType}</Text>
       </Text>
-      
+
       <Text style={styles.descriptionLabel}>
         Descrição: <Text style={styles.value}>{description}</Text>
       </Text>

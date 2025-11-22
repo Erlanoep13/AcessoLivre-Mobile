@@ -10,17 +10,17 @@ export function Navbar() {
 
   return (
     <View style={styles.container}>
-      
+
       {/* Componente do Menu Lateral (Fica escondido até menuVisible ser true) */}
-      <Sidebar 
-        visible={menuVisible} 
-        onClose={() => setMenuVisible(false)} 
+      <Sidebar
+        visible={menuVisible}
+        onClose={() => setMenuVisible(false)}
       />
 
       {/* Botão Menu (Hambúrguer) */}
       {/* Ao clicar, mudamos o estado para true */}
-      <TouchableOpacity 
-        activeOpacity={0.7} 
+      <TouchableOpacity
+        activeOpacity={0.7}
         style={styles.menuButton}
         onPress={() => setMenuVisible(true)}
       >
@@ -32,12 +32,12 @@ export function Navbar() {
 
       {/* Logo Imagem */}
       <TouchableOpacity activeOpacity={0.7}>
-        <Image 
-          source={require('../../assets/AcessoLivre.png')} 
+        <Image
+          source={require('../../assets/AcessoLivre.png')}
           style={styles.logo}
         />
       </TouchableOpacity>
-      
+
     </View>
   );
 }

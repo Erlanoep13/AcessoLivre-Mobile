@@ -1,17 +1,17 @@
 // Sidebar.jsx
 
 import React, { useEffect, useRef } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  Modal, 
-  TouchableOpacity, 
-  Animated, 
-  Dimensions 
+import {
+  View,
+  Text,
+  StyleSheet,
+  Modal,
+  TouchableOpacity,
+  Animated,
+  Dimensions
 } from 'react-native';
 // Importando os ícones (Lupa, Estrela, etc.)
-import { Feather } from '@expo/vector-icons'; 
+import { Feather } from '@expo/vector-icons';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -38,14 +38,14 @@ export function Sidebar({ visible, onClose }) {
       onRequestClose={onClose}
     >
       <View style={styles.overlay}>
-        
-        <Animated.View 
+
+        <Animated.View
           style={[
-            styles.menuContainer, 
+            styles.menuContainer,
             { transform: [{ translateX: slideAnim }] }
           ]}
         >
-          
+
           <View style={styles.header}>
             <Text style={styles.title}>AcessoLivre</Text>
             <TouchableOpacity onPress={onClose}>
@@ -82,12 +82,12 @@ export function Sidebar({ visible, onClose }) {
 
         </Animated.View>
 
-        <TouchableOpacity 
-          style={styles.transparentArea} 
-          onPress={onClose} 
+        <TouchableOpacity
+          style={styles.transparentArea}
+          onPress={onClose}
           activeOpacity={1}
         />
-        
+
       </View>
     </Modal>
   );

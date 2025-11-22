@@ -2,10 +2,11 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-// Importe as páginas que acabamos de criar
+// Importe das páginas de teste
 import { LoginPage } from './src/pages/User/LoginPage';
 import { AddRequestPage } from './src/pages/Admin/AddRequestPage';
 import { MapPage } from './src/pages/User/MapPage';
+import { AddPlacePage } from './src/pages/User/AddPlacePage';
 
 export default function App() {
   return (
@@ -17,8 +18,11 @@ export default function App() {
         
         {/* <LoginPage />
         
-        <AddRequestPage /> */}
-        <MapPage />
+        <AddRequestPage /> 
+        
+        <MapPage />*/}
+        
+        <AddPlacePage />
       
     </View>
     </SafeAreaProvider>
