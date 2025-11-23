@@ -8,6 +8,7 @@ import { AddRequestPage } from './src/pages/Admin/AddRequestPage';
 import { MapPage } from './src/pages/User/MapPage';
 import { AboutPage } from './src/pages/User/AboutPage';
 import { AddPlacePage } from './src/pages/User/AddPlacePage';
+import { FavoritePage } from './src/pages/User/FavoritePage';
 
 export default function App() {
   return (
@@ -20,12 +21,14 @@ export default function App() {
         {/* <LoginPage />
         <AddRequestPage /> 
         <MapPage />
-        <AboutPage/>*/}
-
-        
+        <AboutPage/>
         <AddRequestPage /> 
         <AddPlacePage />
-        <MapPage />
+        <MapPage />*/}
+
+        <FavoritePage/>
+    
+        
       
     </View>
     </SafeAreaProvider>
