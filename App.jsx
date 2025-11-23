@@ -8,6 +8,10 @@ import { AddRequestPage } from './src/pages/Admin/AddRequestPage';
 import { MapPage } from './src/pages/User/MapPage';
 import { AboutPage } from './src/pages/User/AboutPage';
 import { AddPlacePage } from './src/pages/User/AddPlacePage';
+import { RegisterPage } from './src/pages/User/RegisterPage';
+import { ExplicaçõesGerais } from './src/components/ExplicaçoesGerais';
+import { RemovalRequestsPage } from './src/pages/Admin/RemoveRequestPage';
+import { EditRequestsPage } from './src/pages/Admin/EditRequestPage';
 
 export default function App() {
   return (
@@ -20,13 +24,15 @@ export default function App() {
         {/* <LoginPage />
         <AddRequestPage /> 
         <MapPage />
-        <AboutPage/>*/}
-
-        
+        <ExplicaçõesGerais/>
+        <AboutPage/>        
         <AddRequestPage /> 
         <AddPlacePage />
-        <MapPage />
-      
+        <RegisterPage/>
+        <RemovalRequestsPage/>
+        <EditRequestsPage/>*/}
+        <AboutPage/>
+        <ExplicaçõesGerais/>
     </View>
     </SafeAreaProvider>
   );
