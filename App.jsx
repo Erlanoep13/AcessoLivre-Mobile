@@ -19,10 +19,10 @@ export default function App() {
         {/* <LoginPage />
         
         <AddRequestPage /> 
-        
-        <MapPage />*/}
-        
         <AddPlacePage />
+        */}
+        <MapPage />
+        
       
     </View>
     </SafeAreaProvider>

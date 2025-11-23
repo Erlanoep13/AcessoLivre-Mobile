@@ -4,6 +4,7 @@ import { Navbar } from '../../components/Navbar';
 import { SearchBar } from '../../components/SearchBar';
 import { Footer } from '../../components/Footer';
 import { PlaceList } from '../../components/PlaceList/PlaceList';
+import { Map } from '../../components/Map';
 
 export function MapPage() {
   return (
@@ -23,10 +24,8 @@ export function MapPage() {
 
         <View style={styles.content}>
 
-          {/* Exemplo de caixa de conteúdo para testar o scroll */}
-          <View style={styles.placeholderBox}>
-            <Text>Conteúdo do Mapa...</Text>
-          </View>
+          {/* Mapa */}
+          <Map />
 
           <View style={styles.addButtonContainer}>
             <View style={styles.addButton}>
