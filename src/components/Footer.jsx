@@ -8,7 +8,7 @@ export function Footer() {
     <View style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.title}>Acesso Livre</Text>
-        
+
         <Text style={styles.text}>
           Promovendo acessibilidade para todos.
         </Text>
@@ -25,7 +25,7 @@ export function Footer() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#f0f0f0', 
+    backgroundColor: '#f0f0f0',
     paddingVertical: 20,
     paddingHorizontal: 16,
     width: '100%',

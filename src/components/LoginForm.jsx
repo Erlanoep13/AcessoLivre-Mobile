@@ -14,7 +14,7 @@ export function LoginForm() {
 
   return (
     <View style={styles.container}>
-      
+
       {/* Título da Seção */}
       <Text style={styles.pageTitle}>
         Faça Login e aproveite melhor nosso sistema!
@@ -22,7 +22,7 @@ export function LoginForm() {
 
       {/* Card Branco */}
       <View style={styles.card}>
-        
+
         <Text style={styles.label}>Nome</Text>
         <TextInput
           style={styles.input}
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   loginButton: {
-    backgroundColor: '#1e293b', 
+    backgroundColor: '#1e293b',
     borderRadius: 5,
     paddingVertical: 12,
     alignItems: 'center',

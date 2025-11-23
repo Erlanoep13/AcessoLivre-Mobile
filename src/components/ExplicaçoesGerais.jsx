@@ -1,14 +1,14 @@
 // ExplicaçõesGerais.jsx
 
 import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  TouchableOpacity, 
-  Modal, 
-  ScrollView, 
-  Image 
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  ScrollView,
+  Image
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -18,8 +18,8 @@ export function ExplicaçõesGerais() {
   return (
     <View style={styles.container}>
       {/* --- O BOTÃO QUE FICA NA TELA --- */}
-      <TouchableOpacity 
-        style={styles.openButton} 
+      <TouchableOpacity
+        style={styles.openButton}
         onPress={() => setModalVisible(true)}
       >
         <Text style={styles.textButton}>Explicações Gerais</Text>
@@ -34,7 +34,7 @@ export function ExplicaçõesGerais() {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            
+
             {/* Cabeçalho do Modal com botão de fechar */}
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Informações de Acessibilidade</Text>
@@ -44,7 +44,7 @@ export function ExplicaçõesGerais() {
             </View>
 
             <ScrollView contentContainerStyle={styles.modalContent}>
-              
+
               {/* --- Seção Deficiência Motora (Vermelho) --- */}
               <View style={styles.sectionItem}>
                 <View style={styles.rowTitle}>
@@ -52,37 +52,37 @@ export function ExplicaçõesGerais() {
                   <Text style={styles.sectionTitle}>Deficiência Motora</Text>
                 </View>
                 <Text style={styles.descriptionText}>
-                  Locais sinalizados em <Text style={{fontWeight: 'bold'}}>vermelho</Text> possuem acessibilidade voltada a pessoas com deficiência motora (ex.: rampas, pisos antiderrapantes, corrimãos).
+                  Locais sinalizados em <Text style={{ fontWeight: 'bold' }}>vermelho</Text> possuem acessibilidade voltada a pessoas com deficiência motora (ex.: rampas, pisos antiderrapantes, corrimãos).
                 </Text>
-                
-                
-                <Image 
-                  source={{ uri: 'https://via.placeholder.com/300x150/ccc/333?text=Foto+Rampa' }} 
-                  style={styles.imagePlaceholder} 
+
+
+                <Image
+                  source={{ uri: 'https://via.placeholder.com/300x150/ccc/333?text=Foto+Rampa' }}
+                  style={styles.imagePlaceholder}
                   resizeMode="cover"
                 />
               </View>
 
-              
+
               <View style={styles.sectionItem}>
                 <View style={styles.rowTitle}>
                   <View style={[styles.colorIndicator, { backgroundColor: '#2e7d32' }]} />
                   <Text style={styles.sectionTitle}>Deficiência Visual</Text>
                 </View>
                 <Text style={styles.descriptionText}>
-                  Locais em <Text style={{fontWeight: 'bold'}}>verde</Text> possuem recursos para pessoas com deficiência visual (ex.: piso tátil, placas em braille, sinal sonoro).
+                  Locais em <Text style={{ fontWeight: 'bold' }}>verde</Text> possuem recursos para pessoas com deficiência visual (ex.: piso tátil, placas em braille, sinal sonoro).
                 </Text>
 
-                
-                <Image 
-                  source={{ uri: 'https://via.placeholder.com/300x150/ccc/333?text=Foto+Piso+Tatil' }} 
-                  style={styles.imagePlaceholder} 
+
+                <Image
+                  source={{ uri: 'https://via.placeholder.com/300x150/ccc/333?text=Foto+Piso+Tatil' }}
+                  style={styles.imagePlaceholder}
                   resizeMode="cover"
                 />
               </View>
 
             </ScrollView>
-            
+
           </View>
         </View>
       </Modal>
@@ -96,8 +96,8 @@ const styles = StyleSheet.create({
     position: 'absolute', // Tira o botão do fluxo normal e faz ele flutuar  // Distância do topo (ajuste conforme a altura da sua Navbar)
     bottom: 100,
     right: 30,
-    zIndex: 99,          
-    alignSelf: 'center', 
+    zIndex: 99,
+    alignSelf: 'center',
   },
   openButton: {
     backgroundColor: '#2962ff',
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
   },
-  
+
   // Estilos do Modal
   centeredView: {
     flex: 1,

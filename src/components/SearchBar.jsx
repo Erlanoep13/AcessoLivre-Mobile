@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, StyleSheet, Text } from 'react-native';
-import { Feather } from '@expo/vector-icons'; 
+import { Feather } from '@expo/vector-icons';
 
 export function SearchBar() {
   const [texto, setTexto] = useState('');
@@ -18,7 +18,7 @@ export function SearchBar() {
 
   return (
     <View style={styles.container}>
-      
+
       {/* Caixa do Input + Botão */}
       <View style={styles.inputContainer}>
         <TextInput
@@ -57,8 +57,8 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     marginBottom: 16,
-    position: 'relative', 
-    zIndex: 10, 
+    position: 'relative',
+    zIndex: 10,
     paddingHorizontal: 16,
   },
   inputContainer: {
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     borderColor: '#D1D5DB',
     height: 50,
     paddingHorizontal: 10,
-    elevation: 2, 
+    elevation: 2,
     shadowColor: '#000',
     shadowOpacity: 0.05,
     shadowRadius: 2,
