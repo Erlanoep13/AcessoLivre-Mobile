@@ -6,6 +6,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { LoginPage } from './src/pages/User/LoginPage';
 import { AddRequestPage } from './src/pages/Admin/AddRequestPage';
 import { MapPage } from './src/pages/User/MapPage';
+import { AboutPage } from './src/pages/User/AboutPage';
 
 export default function App() {
   return (
@@ -16,9 +17,9 @@ export default function App() {
         {/* Descomente a linha da página que você quer ver */}
         
         {/* <LoginPage />
-        
-        <AddRequestPage /> */}
-        <MapPage />
+        <AddRequestPage /> 
+        <MapPage />*/}
+        <AboutPage/>
       
     </View>
     </SafeAreaProvider>
