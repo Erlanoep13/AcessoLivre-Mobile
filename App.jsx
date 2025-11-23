@@ -15,6 +15,7 @@ import { RemovalRequestsPage } from './src/pages/Admin/RemoveRequestPage';
 import { EditRequestsPage } from './src/pages/Admin/EditRequestPage';
 import { AdminPage } from './src/pages/Admin/AdminPage';
 
+
 export default function App() {
   return (
     <SafeAreaProvider>

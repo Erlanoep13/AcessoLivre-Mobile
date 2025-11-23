@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { Navbar } from '../../components/Navbar';
 import { Footer } from '../../components/Footer';
+import { AdminChart } from '../../components/AdminChart';
 
 export function AdminPage() {
   return (
@@ -11,14 +12,11 @@ export function AdminPage() {
       <Navbar />
 
       <ScrollView style={styles.scrollContainer}>
-        
         <View style={styles.content}>
           <Text style={styles.pageTitle}>Painel do Administrador</Text>
-          
-          {/* Área vazia aguardando seus próximos comandos */}
-          <View style={styles.placeholder}>
-            <Text style={{ color: '#9CA3AF' }}>Conteúdo administrativo aqui...</Text>
-          </View>
+         
+          <AdminChart />
+
         </View>
 
         {/* Footer no final */}
