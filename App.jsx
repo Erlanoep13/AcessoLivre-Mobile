@@ -30,7 +30,7 @@ export default function App() {
         <AboutPage/>
         <AddRequestPage /> 
         <AddPlacePage />
-        <MapPage /><ExplicaçõesGerais/>
+        <ExplicaçõesGerais/>
         <AboutPage/>        
         <AddRequestPage /> 
         <AddPlacePage />
@@ -38,13 +38,11 @@ export default function App() {
         <RemovalRequestsPage/>
         <EditRequestsPage/>
         <AboutPage/>
+        <AdminPage/>
         <ExplicaçõesGerais/>
         <FavoritePage/>*/}
 
-        
-        <AdminPage/>
-        
-      
+        <MapPage />
         
     </View>
     </SafeAreaProvider>

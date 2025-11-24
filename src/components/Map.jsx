@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, Modal } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, Modal, Alert } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { Feather } from '@expo/vector-icons';
 
@@ -42,6 +42,30 @@ export function Map() {
     const [isFullScreen, setIsFullScreen] = useState(false);
     const [tempMarker, setTempMarker] = useState(null);
     const [selectedMarker, setSelectedMarker] = useState(null);
+    const [isCardFavorite, setIsCardFavorite] = useState(false);
+
+    const handleSelectMarker = (marker) => {
+        setIsCardFavorite(false);
+        setSelectedMarker(marker);
+    };
+
+    // Função de Deletar
+    const handleDelete = () => {
+        Alert.alert(
+            "Remover Local",
+            "Tem certeza que deseja remover este local?",
+            [
+                { text: "Cancelar", style: "cancel" },
+                {
+                    text: "Sim, remover",
+                    onPress: () => {
+                        Alert.alert("Sucesso", "Pedido de remoção do local enviado para o administrador.");
+                        setSelectedMarker(null); // Fecha o card após "deletar"
+                    }
+                }
+            ]
+        );
+    };
 
     const handleMapPress = (e) => {
         // Fecha card de local existente se estiver aberto
@@ -78,7 +102,7 @@ export function Map() {
                         onPress={(e) => {
                             e.stopPropagation();
                             setTempMarker(null);
-                            setSelectedMarker(marker);
+                            handleSelectMarker(marker);
                         }}
                     />
                 ))}
@@ -112,13 +136,23 @@ export function Map() {
                         </Text>
 
                         <View style={styles.cardActions}>
+                            {/* Botão Editar */}
                             <TouchableOpacity style={styles.actionBtn} onPress={() => console.log('Editar')}>
                                 <Feather name="edit-2" size={20} color="#333" />
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.actionBtn} onPress={() => console.log('Favoritar')}>
-                                <Feather name="heart" size={20} color="#333" />
+
+                            {/* Botão Favoritar */}
+                            <TouchableOpacity style={styles.actionBtn} onPress={() => setIsCardFavorite(!isCardFavorite)}>
+                                <Feather
+                                    name="heart"
+                                    size={20}
+                                    color={isCardFavorite ? "#d32f2f" : "#333"}
+                                    fill={isCardFavorite ? "#d32f2f" : "transparent"}
+                                />
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.actionBtn} onPress={() => console.log('Deletar')}>
+
+                            {/* Botão Deletar */}
+                            <TouchableOpacity style={styles.actionBtn} onPress={handleDelete}>
                                 <Feather name="trash-2" size={20} color="#333" />
                             </TouchableOpacity>
                         </View>

@@ -1,45 +1,68 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
-export function PlaceCard({ 
-  name, 
-  address, 
-  accessibility, 
-  description, 
-  onEdit, 
-  onFavorite, 
-  onDelete 
+export function PlaceCard({
+  name,
+  address,
+  accessibility,
+  description,
+  onEdit,
+  // onFavorite,
+  // onDelete
 }) {
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  const handleDelete = () => {
+    Alert.alert(
+      "Remover Local",
+      "Tem certeza que deseja remover este local?",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel"
+        },
+        {
+          text: "Sim, remover",
+          onPress: () => Alert.alert("Sucesso", "Pedido de remoção do local enviado para o administrador.")
+        }
+      ]
+    );
+  };
+
   return (
     <View style={styles.card}>
-      {/* Título */}
       <Text style={styles.title}>{name}</Text>
-      
-      {/* Endereço */}
       <Text style={styles.address}>{address}</Text>
 
-      {/* Acessibilidade */}
       <Text style={styles.label}>
-        Tipo de acessibilidade: <Text style={styles.value}>{accessibility}</Text>
+        Acessibilidade: <Text style={styles.value}>{accessibility}</Text>
       </Text>
 
-      {/* Descrição */}
       <Text style={styles.label}>
         Descrição: <Text style={styles.value}>{description}</Text>
       </Text>
 
-      {/* Barra de Ações (Ícones) */}
       <View style={styles.actionsContainer}>
+        {/* Botão Editar */}
         <TouchableOpacity onPress={onEdit} style={styles.iconButton}>
           <Feather name="edit-2" size={20} color="#333" />
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={onFavorite} style={styles.iconButton}>
-          <Feather name="heart" size={20} color="#333" />
+        {/* Botão Favoritar */}
+        <TouchableOpacity
+          onPress={() => setIsFavorite(!isFavorite)}
+          style={styles.iconButton}
+        >
+          <Feather
+            name="heart"
+            size={20}
+            color={isFavorite ? "#d32f2f" : "#333"} // Muda a cor da borda se for favoritado
+          />
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={onDelete} style={styles.iconButton}>
+        {/* Botão Deletar */}
+        <TouchableOpacity onPress={handleDelete} style={styles.iconButton}>
           <Feather name="trash-2" size={20} color="#333" />
         </TouchableOpacity>
       </View>
