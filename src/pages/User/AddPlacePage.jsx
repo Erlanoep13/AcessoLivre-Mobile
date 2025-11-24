@@ -1,11 +1,13 @@
 import React from 'react';
 import { View, ScrollView, StyleSheet, StatusBar } from 'react-native';
-
 import { Navbar } from '../../components/Navbar';
 import { Footer } from '../../components/Footer';
 import { AddPlaceForm } from '../../components/AddPlaceForm';
 
-export function AddPlacePage() {
+export function AddPlacePage({ route }) {
+
+    const coordinate = route.params?.coordinate;
+
     return (
         <View style={styles.container}>
             <StatusBar backgroundColor="#1e4e28" barStyle="light-content" />
@@ -14,9 +16,9 @@ export function AddPlacePage() {
 
             <ScrollView contentContainerStyle={styles.scrollContent}>
 
-                {/* Container centralizado com margem para o formulário */}
                 <View style={styles.formArea}>
-                    <AddPlaceForm />
+                    {/* Passamos a coordenada para dentro do formulário */}
+                    <AddPlaceForm initialCoordinate={coordinate} />
                 </View>
 
                 <Footer />
@@ -29,7 +31,7 @@ export function AddPlacePage() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#1e4e28', // Fundo verde escuro
+        backgroundColor: '#1e4e28',
     },
     scrollContent: {
         flexGrow: 1,

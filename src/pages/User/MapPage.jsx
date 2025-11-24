@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, StatusBar, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { Navbar } from '../../components/Navbar';
 import { SearchBar } from '../../components/SearchBar';
 import { Footer } from '../../components/Footer';
@@ -7,17 +8,18 @@ import { PlaceList } from '../../components/PlaceList/PlaceList';
 import { Map } from '../../components/Map';
 
 export function MapPage() {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
 
-      {/* 2. MOSTRANDO A NAVBAR (Fica fixa no topo) */}
+      {/* NAVBAR */}
       <Navbar />
 
-      {/* 3. ÁREA DE ROLAGEM (Conteúdo + Footer) */}
-      {/* O ScrollView permite rolar a tela se o conteúdo for grande */}
+      {/* ÁREA DE ROLAGEM (Conteúdo + Footer) */}
       <ScrollView style={styles.scrollContainer}>
 
-        {/* Espaço para separar a barra de pesquisa do topo */}
+        {/* Barra de pesquisa com espaço do topo */}
         <View style={styles.spacing}>
           <SearchBar />
         </View>
@@ -27,10 +29,14 @@ export function MapPage() {
           {/* Mapa */}
           <Map />
 
+          {/* BOTÃO DE ADICIONAR LOCAL */}
           <View style={styles.addButtonContainer}>
-            <View style={styles.addButton}>
+            <TouchableOpacity
+              style={styles.addButton}
+              onPress={() => navigation.navigate('AddPlace')}
+            >
               <Text style={styles.addButtonText}>+ Adicionar Local</Text>
-            </View>
+            </TouchableOpacity>
           </View>
 
           {/* --- LISTA DE LOCAIS --- */}
@@ -75,7 +81,7 @@ const styles = StyleSheet.create({
   addButtonContainer: {
     alignItems: 'center',
     marginBottom: 10,
-    marginTop:20,
+    marginTop: 20,
   },
   addButton: {
     backgroundColor: '#22c55e',

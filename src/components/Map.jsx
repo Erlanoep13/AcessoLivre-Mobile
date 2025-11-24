@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, Modal, Alert } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { Feather } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 const INITIAL_REGION = {
     latitude: -5.12056,
@@ -39,6 +40,8 @@ const LEGEND_ITEMS = [
 ];
 
 export function Map() {
+    const navigation = useNavigation();
+
     const [isFullScreen, setIsFullScreen] = useState(false);
     const [tempMarker, setTempMarker] = useState(null);
     const [selectedMarker, setSelectedMarker] = useState(null);
@@ -82,9 +85,13 @@ export function Map() {
     };
 
     const handleAddPlace = () => {
-        console.log("Navegar para adicionar com coords:", tempMarker.coordinate);
-        // ToDo: navigation.navigate('AddPlace', { coords: tempMarker.coordinate });
+        const coordinate = tempMarker.coordinate;
+
+        // Fecha o marcador temporário visualmente
         setTempMarker(null);
+
+        // Navega enviando a coordenada como parâmetro
+        navigation.navigate('AddPlace', { coordinate });
     };
 
     const renderMapView = (isFull) => (

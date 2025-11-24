@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-
+import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
 import { Picker } from '@react-native-picker/picker';
 
-export function AddPlaceForm() {
+export function AddPlaceForm({ initialCoordinate }) {
     const [nome, setNome] = useState('');
     const [localizacao, setLocalizacao] = useState('');
     const [tipo, setTipo] = useState('Sugestão de melhoria');
@@ -13,6 +13,46 @@ export function AddPlaceForm() {
     const [recursos, setRecursos] = useState('');
     const [descricao, setDescricao] = useState('');
     const [image, setImage] = useState(null);
+
+    useEffect(() => {
+        if (initialCoordinate) {
+            transformCoordsToAddress(initialCoordinate);
+        }
+    }, [initialCoordinate]);
+
+    const transformCoordsToAddress = async (coords) => {
+        try {
+            // Pede permissão de localização (Necessário para usar o serviço de geocoding no Android)
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                Alert.alert('Permissão negada', 'Não conseguimos converter as coordenadas em endereço sem permissão de localização.');
+                return;
+            }
+
+            // Faz a conversão reversa
+            let addressResponse = await Location.reverseGeocodeAsync({
+                latitude: coords.latitude,
+                longitude: coords.longitude
+            });
+
+            // O retorno é um array
+            if (addressResponse.length > 0) {
+                const item = addressResponse[0];
+                const street = item.street || item.name || '';
+                const district = item.district || item.subregion || '';
+                const city = item.city || item.region || '';
+                const number = item.streetNumber || '';
+
+                const fullAddress = `${street}${number ? ', ' + number : ''}${district ? ' - ' + district : ''}${city ? ', ' + city : ''}`;
+
+                setLocalizacao(fullAddress);
+            }
+        } catch (error) {
+            console.log("Erro no geocoding:", error);
+            // Se der erro, pelo menos preenchemos com as coordenadas cruas pro usuário saber
+            setLocalizacao(`${coords.latitude}, ${coords.longitude}`);
+        }
+    };
 
     const pickImage = async () => {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
