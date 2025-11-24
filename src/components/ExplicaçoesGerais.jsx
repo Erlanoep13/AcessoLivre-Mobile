@@ -57,7 +57,7 @@ export function ExplicaçõesGerais() {
 
 
                 <Image
-                  source={{ uri: 'https://via.placeholder.com/300x150/ccc/333?text=Foto+Rampa' }}
+                  source={require ('../../assets/n_rampas_acessibilidade.jpg' )}
                   style={styles.imagePlaceholder}
                   resizeMode="cover"
                 />
@@ -75,10 +75,37 @@ export function ExplicaçõesGerais() {
 
 
                 <Image
-                  source={{ uri: 'https://via.placeholder.com/300x150/ccc/333?text=Foto+Piso+Tatil' }}
+                  source={require('../../assets/piso tátil.png')}
                   style={styles.imagePlaceholder}
                   resizeMode="cover"
                 />
+              </View>
+
+              <View style={styles.sectionItem}>
+                <View style={styles.rowTitle}>
+                  <View style={[styles.colorIndicator, { backgroundColor: 'blue' }]} />
+                  <Text style={styles.sectionTitle}>Deficiência Motora e Visual(ambas)</Text>
+                </View>
+                <Text style={styles.descriptionText}>
+                  Locais em <Text style={{ fontWeight: 'bold' }}>azul</Text> estão os locais que atendem tanto pessoas com deficiência motora quanto visual.
+                </Text>
+
+
+                <Image
+                  source={require('../../assets/visual e motora.jpg' )}
+                  style={styles.imagePlaceholder}
+                  resizeMode="cover"
+                />
+              </View>
+
+              <View style={styles.sectionItem}>
+                <View style={styles.rowTitle}>
+                  <View style={[styles.colorIndicator, { backgroundColor: 'grey' }]} />
+                  <Text style={styles.sectionTitle}>Sugestão de melhoria</Text>
+                </View>
+                <Text style={styles.descriptionText}>
+                  Locais em <Text style={{ fontWeight: 'bold' }}>cinza</Text> Locais onde a acessibilidade ainda não está presente, mas seria essencial incluir.
+                </Text>
               </View>
 
             </ScrollView>

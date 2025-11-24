@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
-import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons'; // Removi o FontAwesome5 pois não usaremos mais no header
 import { Navbar } from '../../components/Navbar';
-import { Footer } from '../../components/Footer'; // Importando seu footer
+import { Footer } from '../../components/Footer';
 
 export function AboutPage() {
   return (
@@ -12,7 +12,12 @@ export function AboutPage() {
         
         {/* Cabeçalho da Página */}
         <View style={styles.header}>
-          <FontAwesome5 name="accessible-icon" size={50} color="#fff" />
+          
+          <Image 
+            source={require('../../../assets/AcessoLivre.png')} 
+            style={styles.logo}
+            resizeMode="contain" 
+          />
           <Text style={styles.headerTitle}>Acesso Livre</Text>
           <Text style={styles.headerSubtitle}>Inclusão em cada esquina</Text>
         </View>
@@ -41,10 +46,8 @@ export function AboutPage() {
           </View>
         </View>
 
-        {/* Versão do App */}
         <Text style={styles.version}>Versão 1.0.0 (Beta)</Text>
 
-        {/* Seu Footer entra aqui no final do scroll */}
         <Footer />
 
       </ScrollView>
@@ -52,7 +55,6 @@ export function AboutPage() {
   );
 }
 
-// Componentezinho interno só para exibir cada membro da equipe
 function TeamMember({ name, role, icon }) {
   return (
     <View style={styles.memberRow}>
@@ -70,7 +72,7 @@ function TeamMember({ name, role, icon }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1e4e28', // O Verde da equipe
+    backgroundColor: '#1e4e28',
   },
   scrollContent: {
     flexGrow: 1,
@@ -79,22 +81,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 40,
   },
+ 
+  logo: {
+    width: 100,  // Ajuste o tamanho conforme necessário
+    height: 100, 
+    marginBottom: 10,
+  },
   headerTitle: {
     fontSize: 28,
     fontWeight: 'bold',
     color: '#fff',
-    marginTop: 10,
+    marginTop: 5,
   },
   headerSubtitle: {
     fontSize: 16,
-    color: '#a5d6a7', // Um verde mais claro para subtítulo
+    color: '#a5d6a7',
   },
   card: {
     backgroundColor: '#fff',
     marginHorizontal: 20,
     borderRadius: 16,
     padding: 24,
-    elevation: 5, // Sombra no Android
+    elevation: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
@@ -128,7 +136,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   teamContainer: {
-    gap: 12, // Espaço entre os itens da lista
+    gap: 12,
   },
   memberRow: {
     flexDirection: 'row',
