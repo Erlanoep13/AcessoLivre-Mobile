@@ -22,9 +22,6 @@ export default function App() {
         <MapPage />
         <AboutPage/>*/}
 
-        
-        <AddRequestPage /> 
-        <AddPlacePage />
         <MapPage />
       
     </View>

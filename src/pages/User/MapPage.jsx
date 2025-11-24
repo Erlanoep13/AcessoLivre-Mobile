@@ -74,7 +74,8 @@ const styles = StyleSheet.create({
   //Estilo do botão
   addButtonContainer: {
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 10,
+    marginTop:20,
   },
   addButton: {
     backgroundColor: '#22c55e',

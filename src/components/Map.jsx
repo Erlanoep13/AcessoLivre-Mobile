@@ -1,8 +1,8 @@
-import React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
-import MapView, { Marker, Callout } from 'react-native-maps';
+import React, { useState } from 'react';
+import { View, StyleSheet, Text, TouchableOpacity, Modal } from 'react-native';
+import MapView, { Marker } from 'react-native-maps';
+import { Feather } from '@expo/vector-icons';
 
-// Coordenadas de Boa Viagem - CE
 const INITIAL_REGION = {
     latitude: -5.12056,
     longitude: -39.73139,
@@ -10,56 +10,167 @@ const INITIAL_REGION = {
     longitudeDelta: 0.015,
 };
 
-// Dados da Legenda
-const LEGEND_ITEMS = [
-    { color: "#d32f2f", label: "Deficiência Motora" },
-    { color: "#3bb041ff", label: "Deficiência Visual" },
-    { color: "#1976d2", label: "Visual e Motora" },
-    { color: "#9d9d9dff", label: "Sugestão de melhoria" },
-];
-
-// Mock de locais para os marcadores (Pins no mapa)
 const MAP_MARKERS = [
     {
         id: 1,
         title: "Praça da Matriz",
-        description: "Acessibilidade Motora",
+        address: "Boa Viagem - Centro",
+        description: "Vaga de estacionamento para pessoas com deficiência e rampa de acesso.",
+        accessibility: "Motora",
         coordinate: { latitude: -5.126254, longitude: -39.729998 },
         color: "#d32f2f"
     },
     {
         id: 2,
         title: "IFCE - Campus Boa Viagem",
+        address: "Rod. Pres. Juscelino Kubitschek",
         description: "Rampas e Banheiros Adaptados",
+        accessibility: "Motora e Visual",
         coordinate: { latitude: -5.082886, longitude: -39.706610 },
         color: "#2e7d32"
     }
 ];
 
+const LEGEND_ITEMS = [
+    { color: "#d32f2f", label: "Deficiência Motora" },
+    { color: "#2e7d32", label: "Deficiência Visual" },
+    { color: "#1976d2", label: "Visual e Motora" },
+    { color: "#757575", label: "Sugestão de melhoria" },
+];
+
 export function Map() {
-    return (
-        <View style={styles.container}>
+    const [isFullScreen, setIsFullScreen] = useState(false);
+    const [tempMarker, setTempMarker] = useState(null);
+    const [selectedMarker, setSelectedMarker] = useState(null);
+
+    const handleMapPress = (e) => {
+        // Fecha card de local existente se estiver aberto
+        setSelectedMarker(null);
+
+        // Pega as coordenadas do clique
+        const coordinate = e.nativeEvent.coordinate;
+
+        // Define o marcador temporário
+        setTempMarker({
+            coordinate: coordinate,
+            title: "Novo Local?"
+        });
+    };
+
+    const handleAddPlace = () => {
+        console.log("Navegar para adicionar com coords:", tempMarker.coordinate);
+        // ToDo: navigation.navigate('AddPlace', { coords: tempMarker.coordinate });
+        setTempMarker(null);
+    };
+
+    const renderMapView = (isFull) => (
+        <View style={{ flex: 1 }}>
             <MapView
                 style={styles.map}
                 initialRegion={INITIAL_REGION}
-            // showsUserLocation={true} // Para mostrar a localização do usuário, pode ser implementado futuramente
+                onPress={handleMapPress} // Detecta clique fora do marcador
             >
                 {MAP_MARKERS.map((marker) => (
                     <Marker
                         key={marker.id}
                         coordinate={marker.coordinate}
                         pinColor={marker.color}
-                    >
-                        {/* Callout é o balãozinho que abre ao clicar no marcador */}
-                        <Callout>
-                            <View style={styles.calloutContainer}>
-                                <Text style={styles.calloutTitle}>{marker.title}</Text>
-                                <Text style={styles.calloutDescription}>{marker.description}</Text>
-                            </View>
-                        </Callout>
-                    </Marker>
+                        onPress={(e) => {
+                            e.stopPropagation();
+                            setTempMarker(null);
+                            setSelectedMarker(marker);
+                        }}
+                    />
                 ))}
+                {/* Marcador Temporário */}
+                {tempMarker && (
+                    <Marker
+                        coordinate={tempMarker.coordinate}
+                        pinColor="#eaff00"
+                    />
+                )}
             </MapView>
+
+            {/* --- CARD FLUTUANTE --- */}
+            {selectedMarker && (
+                <View style={styles.floatingCardContainer}>
+                    <View style={styles.cardContent}>
+
+                        {/* Botão fechar card (X) */}
+                        <TouchableOpacity
+                            style={styles.closeCardButton}
+                            onPress={() => setSelectedMarker(null)}
+                        >
+                            <Feather name="x" size={20} color="#666" />
+                        </TouchableOpacity>
+
+                        <Text style={styles.cardTitle}>{selectedMarker.title}</Text>
+                        <Text style={styles.cardAddress}>{selectedMarker.address}</Text>
+
+                        <Text style={styles.cardDescription}>
+                            {selectedMarker.description}
+                        </Text>
+
+                        <View style={styles.cardActions}>
+                            <TouchableOpacity style={styles.actionBtn} onPress={() => console.log('Editar')}>
+                                <Feather name="edit-2" size={20} color="#333" />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.actionBtn} onPress={() => console.log('Favoritar')}>
+                                <Feather name="heart" size={20} color="#333" />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.actionBtn} onPress={() => console.log('Deletar')}>
+                                <Feather name="trash-2" size={20} color="#333" />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            )}
+
+            {tempMarker && (
+                <View style={styles.floatingCardContainer}>
+                    <View style={styles.addPlaceCard}>
+                        <Text style={styles.addPlaceTitle}>Adicionar novo local aqui?</Text>
+
+                        <View style={styles.addPlaceButtons}>
+                            {/* Botão Cancelar */}
+                            <TouchableOpacity
+                                style={[styles.addBtn, styles.cancelBtn]}
+                                onPress={() => setTempMarker(null)}
+                            >
+                                <Text style={styles.cancelBtnText}>Cancelar</Text>
+                            </TouchableOpacity>
+
+                            {/* Botão Sim */}
+                            <TouchableOpacity
+                                style={[styles.addBtn, styles.confirmBtn]}
+                                onPress={handleAddPlace}
+                            >
+                                <Text style={styles.confirmBtnText}>Confirmar</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            )}
+
+            {/* Botão de tela cheia */}
+            <TouchableOpacity
+                style={styles.fullscreenButton}
+                onPress={() => setIsFullScreen(true)}
+            >
+                <Feather name={isFull ? "minimize" : "maximize"} size={24} color="#fff" />
+            </TouchableOpacity>
+        </View>
+    );
+
+    return (
+        <View style={styles.wrapper}>
+
+            {/* MODO EMBUTIDO */}
+            <View style={styles.container}>
+                {renderMapView(false)}
+            </View>
+
+            {/* Legenda */}
             <View style={styles.legendContainer}>
                 <Text style={styles.legendTitle}>Legenda:</Text>
                 <View style={styles.legendGrid}>
@@ -72,41 +183,172 @@ export function Map() {
                 </View>
             </View>
 
+            {/* MODAL TELA CHEIA */}
+            <Modal
+                visible={isFullScreen}
+                animationType="slide"
+                onRequestClose={() => setIsFullScreen(false)}
+            >
+                <View style={styles.fullscreenContainer}>
+                    {renderMapView(true)}
+
+                    {/* Botão fechar modal específico */}
+                    <TouchableOpacity
+                        style={[styles.fullscreenButton, styles.closeModalButton]}
+                        onPress={() => setIsFullScreen(false)}
+                    >
+                        <Feather name="minimize" size={24} color="#fff" />
+                    </TouchableOpacity>
+                </View>
+            </Modal>
+
         </View>
-
-
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
+    wrapper: {
+        marginBottom: 15,
+        backgroundColor: '#fff',
         borderRadius: 8,
         overflow: 'hidden',
-        marginBottom: 15,
-        borderWidth: 1,
-        borderColor: '#ddd',
-        elevation: 2,
+        elevation: 3,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+    },
+    container: {
+        height: 410,
+        width: '100%',
     },
     map: {
         width: '100%',
-        height: 400,
+        height: '100%',
     },
-    calloutContainer: {
-        width: 160,
+    fullscreenButton: {
+        position: 'absolute',
+        bottom: 10,
+        left: 10,
+        backgroundColor: '#166534',
+        padding: 10,
+        borderRadius: 4,
+        elevation: 5,
+    },
+    fullscreenContainer: {
+        flex: 1,
+        backgroundColor: '#fff',
+    },
+    closeButton: {
+        backgroundColor: '#d32f2f',
+        bottom: 40,
+    },
+
+    // --- ESTILOS DO CARD FLUTUANTE ---
+    floatingCardContainer: {
+        position: 'absolute',
+        top: 20,
+        left: 20,
+        right: 20,
+        backgroundColor: 'transparent',
+        alignItems: 'center',
+        zIndex: 10,
+    },
+    cardContent: {
+        backgroundColor: '#fff',
+        borderWidth: 0.5,
+        borderRadius: 10,
+        padding: 16,
+        width: '100%',
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
+    closeCardButton: {
+        position: 'absolute',
+        top: 10,
+        right: 10,
+        zIndex: 1,
         padding: 5,
     },
-    calloutTitle: {
+    cardTitle: {
         fontWeight: 'bold',
-        fontSize: 14,
-        marginBottom: 2,
+        fontSize: 18,
+        marginBottom: 4,
+        color: '#000',
+        paddingRight: 20,
     },
-    calloutDescription: {
+    cardAddress: {
         fontSize: 12,
         color: '#666',
+        marginBottom: 8,
     },
+    cardDescription: {
+        fontSize: 14,
+        color: '#333',
+        marginBottom: 12,
+    },
+    cardActions: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        gap: 25,
+        borderTopWidth: 1,
+        borderTopColor: '#eee',
+        paddingTop: 10,
+    },
+    actionBtn: {
+        padding: 5,
+    },
+
+    // ---- CARD DE ADIÇÂO ----
+    addPlaceCard: {
+        borderWidth: 0.5,
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        padding: 20,
+        width: 300,
+        alignItems: 'center',
+        elevation: 5,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+    },
+    addPlaceTitle: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#333',
+        marginBottom: 15,
+    },
+    addPlaceButtons: {
+        flexDirection: 'row',
+        gap: 40,
+    },
+    addBtn: {
+        paddingVertical: 8,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+    },
+    confirmBtn: {
+        backgroundColor: '#22c55e',
+    },
+    cancelBtn: {
+        backgroundColor: '#ff3300ff',
+    },
+    confirmBtnText: {
+        color: '#fff',
+        fontWeight: 'bold',
+    },
+    cancelBtnText: {
+        color: '#fff6f6ff',
+        fontWeight: 'bold',
+    },
+
+    // --- LEGENDA ---
     legendContainer: {
         padding: 12,
-        backgroundColor: '#fff',
         borderTopWidth: 1,
         borderTopColor: '#eee',
     },
@@ -118,7 +360,8 @@ const styles = StyleSheet.create({
         textTransform: 'uppercase',
     },
     legendGrid: {
-        flexDirection: 'column',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
         gap: 10,
     },
     legendItem: {
