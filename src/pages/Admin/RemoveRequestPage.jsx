@@ -10,7 +10,7 @@ import {
 import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
 import { Footer } from '../../components/Footer';
 
-export function RemovalRequestsPage() {
+export function RemoveRequestsPage() {
   // Dados fictícios para simular pedidos vindos da API/Base de dados
   const [requests, setRequests] = useState([
     { 
