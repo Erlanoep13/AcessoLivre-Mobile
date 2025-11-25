@@ -4,10 +4,10 @@ import Svg, { G, Path } from 'react-native-svg';
 
 // Dados Iguais aos da sua imagem
 const MOCK_DATA = [
-  { name: 'Deficiência Motora', value: 33, color: '#d12929ff' }, // Azul
-  { name: 'Deficiência Visual', value: 33, color: '#10B981' },   // Verde
-  { name: 'Deficiência Motora e Visual              ', value: 33, color: '#F59E0B' }, // Laranja/Amarelo
-  { name: 'Sugestão de Melhoria', value: 0, color: '#EF4444' }, // Vermelho
+  { name: 'Deficiência Motora', value: 35, color: '#dc2626' }, 
+  { name: 'Deficiência Visual', value: 20, color: '#4ade80' },   
+  { name: 'Deficiência Motora e Visual              ', value: 20, color: '#2563eb' }, 
+  { name: 'Sugestão de Melhoria', value: 25, color: '#4b5563' }, 
 ];
 
 export function AdminChart() {

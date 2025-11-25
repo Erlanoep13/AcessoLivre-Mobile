@@ -3,6 +3,7 @@ import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { Navbar } from '../../components/Navbar';
 import { Footer } from '../../components/Footer';
 import { AdminChart } from '../../components/AdminChart';
+import { AdminQuickActions } from '../../components/AdminQuickActions';
 
 export function AdminPage() {
   return (
@@ -16,7 +17,15 @@ export function AdminPage() {
           <Text style={styles.pageTitle}>Painel do Administrador</Text>
          
           <AdminChart />
-
+          {/* Botões de Ação Rápida */}
+          <AdminQuickActions 
+          addRequests={2}     // Exemplo: 2 pedidos de adição
+          editRequests={6}    // Exemplo: 6 pedidos de edição
+          removeRequests={0}  // 0 pedidos de remoção
+          onPressAdd={() => console.log('Ver adições')}
+          onPressEdit={() => console.log('Ver edições')}
+          onPressRemove={() => console.log('Ver remoções')}
+        />
         </View>
 
         {/* Footer no final */}
