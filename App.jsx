@@ -8,6 +8,11 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <NavigationContainer>
+        <StatusBar 
+        translucent={true} 
+        barStyle="dark-content" 
+        backgroundColor="transparent" 
+      />
         <StatusBar backgroundColor="#1e4e28" barStyle="light-content" />
         <Routes />
       </NavigationContainer>

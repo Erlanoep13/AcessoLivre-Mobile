@@ -6,7 +6,7 @@ import { AddPlaceForm } from '../../components/AddPlaceForm';
 
 export function AddPlacePage({ route }) {
 
-    const coordinate = route.params?.coordinate;
+    const { coordinate, placeData } = route.params || {};
 
     return (
         <View style={styles.container}>
@@ -17,8 +17,11 @@ export function AddPlacePage({ route }) {
             <ScrollView contentContainerStyle={styles.scrollContent}>
 
                 <View style={styles.formArea}>
-                    {/* Passamos a coordenada para dentro do formulário */}
-                    <AddPlaceForm initialCoordinate={coordinate} />
+                    {/* Passamos a coordenada e os dados do local para o formulário */}
+                    <AddPlaceForm
+                        initialCoordinate={coordinate}
+                        initialData={placeData}
+                    />
                 </View>
 
                 <Footer />
