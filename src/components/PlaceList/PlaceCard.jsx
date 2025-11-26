@@ -8,8 +8,6 @@ export function PlaceCard({
   accessibility,
   description,
   onEdit,
-  // onFavorite,
-  // onDelete
 }) {
   const [isFavorite, setIsFavorite] = useState(false);
 

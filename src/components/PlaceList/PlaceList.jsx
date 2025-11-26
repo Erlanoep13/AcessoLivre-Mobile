@@ -1,36 +1,19 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { PlaceCard } from './PlaceCard';
+import { PLACES_DATA } from '../../data/places';
 
-// Dados mockados
-const MOCK_PLACES = [
-  {
-    id: '1',
-    name: 'Praça da Matriz',
-    address: 'Boa Viagem - Centro, praça Monsenhor José Cândido',
-    accessibility: 'Motora',
-    description: 'Vaga de estacionamento para pessoas com deficiências e rampa de acesso à praça perto da Tropikaly'
-  },
-  {
-    id: '2',
-    name: 'IFCE - Campus Boa Viagem',
-    address: 'Rod. Pres. Juscelino Kubitschek - Boa Viagem, CE, 63870-000',
-    accessibility: 'Motora',
-    description: 'Instituto Federal de Educação, Ciência e Tecnologia do Ceará. Possui rampas e banheiros adaptados.'
-  }
-];
-
-export function PlaceList() {
+export function PlaceList({ onEditPress }) {
   return (
     <View style={styles.container}>
-      {MOCK_PLACES.map((place) => (
-        <PlaceCard 
+      {PLACES_DATA.map((place) => (
+        <PlaceCard
           key={place.id}
-          name={place.name}
-          address={place.address}
-          accessibility={place.accessibility}
-          description={place.description}
-          onEdit={() => console.log('Editar', place.id)}
+          name={place.nome}
+          address={place.localizacao}
+          accessibility={place.tipo}
+          description={place.descricao}
+          onEdit={() => onEditPress(place)}
           onFavorite={() => console.log('Favoritar', place.id)}
           onDelete={() => console.log('Deletar', place.id)}
         />

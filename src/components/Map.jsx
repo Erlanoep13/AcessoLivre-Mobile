@@ -3,6 +3,8 @@ import { View, StyleSheet, Text, TouchableOpacity, Modal, Alert } from 'react-na
 import MapView, { Marker } from 'react-native-maps';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { PLACES_DATA } from '../data/places';
+import { getPinColor, ACCESSIBILITY_COLORS } from '../utils/acessibilityColors';
 
 const INITIAL_REGION = {
     latitude: -5.12056,
@@ -11,32 +13,12 @@ const INITIAL_REGION = {
     longitudeDelta: 0.015,
 };
 
-const MAP_MARKERS = [
-    {
-        id: 1,
-        title: "Praça da Matriz",
-        address: "Boa Viagem - Centro",
-        description: "Vaga de estacionamento para pessoas com deficiência e rampa de acesso.",
-        accessibility: "Motora",
-        coordinate: { latitude: -5.126254, longitude: -39.729998 },
-        color: "#d32f2f"
-    },
-    {
-        id: 2,
-        title: "IFCE - Campus Boa Viagem",
-        address: "Rod. Pres. Juscelino Kubitschek",
-        description: "Rampas e Banheiros Adaptados",
-        accessibility: "Motora e Visual",
-        coordinate: { latitude: -5.082886, longitude: -39.706610 },
-        color: "#2e7d32"
-    }
-];
-
+// Legenda dinâmica baseada nas nossas constantes de cor
 const LEGEND_ITEMS = [
-    { color: "#d32f2f", label: "Deficiência Motora" },
-    { color: "#2e7d32", label: "Deficiência Visual" },
-    { color: "#1976d2", label: "Visual e Motora" },
-    { color: "#757575", label: "Sugestão de melhoria" },
+    { color: ACCESSIBILITY_COLORS['Motora'], label: "Deficiência Motora" },
+    { color: ACCESSIBILITY_COLORS['Visual'], label: "Deficiência Visual" },
+    { color: ACCESSIBILITY_COLORS['Motora e Visual'], label: "Visual e Motora" },
+    { color: ACCESSIBILITY_COLORS['default'], label: "Sugestão de melhoria" },
 ];
 
 export function Map() {
@@ -101,15 +83,16 @@ export function Map() {
                 initialRegion={INITIAL_REGION}
                 onPress={handleMapPress} // Detecta clique fora do marcador
             >
-                {MAP_MARKERS.map((marker) => (
+                {PLACES_DATA.map((place) => (
                     <Marker
-                        key={marker.id}
-                        coordinate={marker.coordinate}
-                        pinColor={marker.color}
+                        key={place.id}
+                        coordinate={place.coordinate}
+                        // 3. COR DINÂMICA
+                        pinColor={getPinColor(place.tipo)}
                         onPress={(e) => {
                             e.stopPropagation();
                             setTempMarker(null);
-                            handleSelectMarker(marker);
+                            handleSelectMarker(place);
                         }}
                     />
                 ))}
@@ -135,16 +118,23 @@ export function Map() {
                             <Feather name="x" size={20} color="#666" />
                         </TouchableOpacity>
 
-                        <Text style={styles.cardTitle}>{selectedMarker.title}</Text>
-                        <Text style={styles.cardAddress}>{selectedMarker.address}</Text>
+                        <Text style={styles.cardTitle}>{selectedMarker.nome}</Text>
+                        <Text style={styles.cardAddress}>{selectedMarker.localizacao}</Text>
 
                         <Text style={styles.cardDescription}>
-                            {selectedMarker.description}
+                            {selectedMarker.descricao}
                         </Text>
 
                         <View style={styles.cardActions}>
                             {/* Botão Editar */}
-                            <TouchableOpacity style={styles.actionBtn} onPress={() => console.log('Editar')}>
+                            <TouchableOpacity
+                                style={styles.actionBtn}
+                                onPress={() => {
+                                    // Navega enviando os dados do marcador selecionado
+                                    navigation.navigate('AddPlace', { placeData: selectedMarker });
+                                    setSelectedMarker(null); // Fecha o card
+                                }}
+                            >
                                 <Feather name="edit-2" size={20} color="#333" />
                             </TouchableOpacity>
 

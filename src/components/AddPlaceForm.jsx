@@ -5,7 +5,7 @@ import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
 import { Picker } from '@react-native-picker/picker';
 
-export function AddPlaceForm({ initialCoordinate }) {
+export function AddPlaceForm({ initialCoordinate, initialData }) {
     const [nome, setNome] = useState('');
     const [localizacao, setLocalizacao] = useState('');
     const [tipo, setTipo] = useState('Sugestão de melhoria');
@@ -14,11 +14,27 @@ export function AddPlaceForm({ initialCoordinate }) {
     const [descricao, setDescricao] = useState('');
     const [image, setImage] = useState(null);
 
+
+    // Efeito para preencher dados na EDIÇÃO
     useEffect(() => {
-        if (initialCoordinate) {
+        if (initialData) {
+            setNome(initialData.nome);
+            setLocalizacao(initialData.localizacao);
+            setDescricao(initialData.descricao || '');
+            setTipo(initialData.tipo || 'Sugestão de melhoria');
+            setCategoria(initialData.categoria);
+            setImage(initialData.image);
+            setRecursos(initialData.recursos);
+        }
+    }, [initialData]);
+
+    // Efeito para preencher endereço na ADIÇÃO (Geocoding)
+    useEffect(() => {
+        // Só roda se NÃO for edição (prioriza os dados existentes)
+        if (initialCoordinate && !initialData) {
             transformCoordsToAddress(initialCoordinate);
         }
-    }, [initialCoordinate]);
+    }, [initialCoordinate, initialData]);
 
     const transformCoordsToAddress = async (coords) => {
         try {

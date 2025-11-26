@@ -40,7 +40,9 @@ export function MapPage() {
           </View>
 
           {/* --- LISTA DE LOCAIS --- */}
-          <PlaceList />
+          <PlaceList 
+             onEditPress={(place) => navigation.navigate('AddPlace', { placeData: place })}
+          />
 
         </View>
 
