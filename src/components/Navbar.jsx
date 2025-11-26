@@ -1,43 +1,39 @@
-//Navbar.jsx
-
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { Sidebar } from './Sidebar'; // Importando o arquivo que criamos acima
+import { View, Text, StyleSheet, TouchableOpacity, Image, Platform, StatusBar } from 'react-native';
+import { Sidebar } from './Sidebar'; 
+
+// Garante um valor padrão (24px) caso o Android se perca no cálculo inicial
+const STATUSBAR_HEIGHT = Platform.OS === 'android' ? (StatusBar.currentHeight || 24) : 44;
 
 export function Navbar() {
-  // Estado para controlar se o menu está visível ou não
   const [menuVisible, setMenuVisible] = useState(false);
 
   return (
     <View style={styles.container}>
-
-      {/* Componente do Menu Lateral (Fica escondido até menuVisible ser true) */}
-      <Sidebar
-        visible={menuVisible}
-        onClose={() => setMenuVisible(false)}
+      
+      <Sidebar 
+        visible={menuVisible} 
+        onClose={() => setMenuVisible(false)} 
       />
 
-      {/* Botão Menu (Hambúrguer) */}
-      {/* Ao clicar, mudamos o estado para true */}
-      <TouchableOpacity
-        activeOpacity={0.7}
+      {/* Botão Menu */}
+      <TouchableOpacity 
+        activeOpacity={0.7} 
         style={styles.menuButton}
         onPress={() => setMenuVisible(true)}
       >
         <Text style={styles.menuText}>☰</Text>
       </TouchableOpacity>
 
-      {/* Título */}
       <Text style={styles.title}>AcessoLivre</Text>
 
-      {/* Logo Imagem */}
       <TouchableOpacity activeOpacity={0.7}>
-        <Image
-          source={require('../../assets/AcessoLivre.png')}
+        <Image 
+          source={require('../../assets/AcessoLivre.png')} 
           style={styles.logo}
         />
       </TouchableOpacity>
-
+      
     </View>
   );
 }
@@ -50,15 +46,18 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingBottom: 10,
-    paddingTop: 5,
+    paddingBottom: 7,
+    paddingTop: STATUSBAR_HEIGHT + 5, 
     elevation: 4,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
   },
   menuButton: {
     padding: 4,
   },
   menuText: {
-    fontSize: 28, // Aumentei um pouco para ficar mais fácil de clicar
+    fontSize: 28,
     color: '#FFF',
     fontWeight: 'bold',
   },
