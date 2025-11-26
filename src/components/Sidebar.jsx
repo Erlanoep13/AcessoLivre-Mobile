@@ -10,13 +10,18 @@ import {
   Animated,
   Dimensions
 } from 'react-native';
-// Importando os ícones (Lupa, Estrela, etc.)
 import { Feather } from '@expo/vector-icons';
+
+// 1. IMPORTAR O HOOK DE NAVEGAÇÃO
+import { useNavigation } from '@react-navigation/native';
 
 const screenWidth = Dimensions.get('window').width;
 
 export function Sidebar({ visible, onClose }) {
   const slideAnim = useRef(new Animated.Value(-screenWidth)).current;
+  
+  // 2. INICIALIZAR A NAVEGAÇÃO
+  const navigation = useNavigation();
 
   useEffect(() => {
     if (visible) {
@@ -29,6 +34,12 @@ export function Sidebar({ visible, onClose }) {
       slideAnim.setValue(-screenWidth);
     }
   }, [visible]);
+
+  // 3. FUNÇÃO AUXILIAR PARA NAVEGAR E FECHAR O MENU
+  const handleNavigate = (screenName) => {
+    onClose(); // Fecha o menu primeiro para ficar fluido
+    navigation.navigate(screenName); // Vai para a tela desejada
+  };
 
   return (
     <Modal
@@ -49,33 +60,44 @@ export function Sidebar({ visible, onClose }) {
           <View style={styles.header}>
             <Text style={styles.title}>AcessoLivre</Text>
             <TouchableOpacity onPress={onClose}>
-              {/* Troquei o "X" por um ícone de fechar mais bonito */}
               <Feather name="x" size={24} color="#666" />
             </TouchableOpacity>
           </View>
 
           <View style={styles.divider} />
 
-          {/* Opção: Pesquisar */}
-          <TouchableOpacity style={styles.menuItem} onPress={onClose}>
+          {/* Opção: Pesquisar (Vai para o Mapa) */}
+          <TouchableOpacity 
+            style={styles.menuItem} 
+            onPress={() => handleNavigate('MapPage')}
+          >
             <Feather name="search" size={20} color="#333" style={styles.icon} />
             <Text style={styles.menuText}>Pesquisar</Text>
           </TouchableOpacity>
 
           {/* Opção: Favoritos */}
-          <TouchableOpacity style={styles.menuItem} onPress={onClose}>
+          <TouchableOpacity 
+            style={styles.menuItem} 
+            onPress={() => handleNavigate('Favorites')}
+          >
             <Feather name="star" size={20} color="#333" style={styles.icon} />
             <Text style={styles.menuText}>Favoritos</Text>
           </TouchableOpacity>
 
           {/* Opção: Login */}
-          <TouchableOpacity style={styles.menuItem} onPress={onClose}>
+          <TouchableOpacity 
+            style={styles.menuItem} 
+            onPress={() => handleNavigate('Login')}
+          >
             <Feather name="user" size={20} color="#333" style={styles.icon} />
             <Text style={styles.menuText}>Login</Text>
           </TouchableOpacity>
 
           {/* Opção: Criar Conta */}
-          <TouchableOpacity style={styles.menuItem} onPress={onClose}>
+          <TouchableOpacity 
+            style={styles.menuItem} 
+            onPress={() => handleNavigate('Register')}
+          >
             <Feather name="plus" size={20} color="#333" style={styles.icon} />
             <Text style={styles.menuText}>Criar Conta</Text>
           </TouchableOpacity>
@@ -100,7 +122,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
   menuContainer: {
-    width: '75%', // Aumentei um pouquinho pra caber bem texto+icone
+    width: '75%',
     backgroundColor: '#FFF',
     padding: 20,
     height: '100%',
@@ -132,14 +154,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   menuItem: {
-    flexDirection: 'row', // IMPORTANTE: Deixa ícone e texto lado a lado
-    alignItems: 'center', // Centraliza verticalmente
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingVertical: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#f0f0f0',
   },
   icon: {
-    marginRight: 15, // Espaço entre o ícone e o texto
+    marginRight: 15,
   },
   menuText: {
     fontSize: 16,
