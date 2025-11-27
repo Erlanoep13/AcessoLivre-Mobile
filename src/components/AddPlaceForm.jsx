@@ -4,8 +4,11 @@ import { Feather } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
 import { Picker } from '@react-native-picker/picker';
+import { useNavigation } from '@react-navigation/native';
 
 export function AddPlaceForm({ initialCoordinate, initialData }) {
+    const navigation = useNavigation();
+
     const [nome, setNome] = useState('');
     const [localizacao, setLocalizacao] = useState('');
     const [tipo, setTipo] = useState('Sugestão de melhoria');
@@ -111,7 +114,25 @@ export function AddPlaceForm({ initialCoordinate, initialData }) {
             return;
         }
 
-        Alert.alert("Sucesso", "Dados prontos para envio!");
+        const isEdit = !!initialData; // Se initialData existe, é edição
+        const titulo = "Sucesso";
+        const mensagem = isEdit
+            ? "Pedido de edição enviado para o administrador."
+            : "Pedido de adição enviado para o administrador.";
+
+        Alert.alert(
+            titulo,
+            mensagem,
+            [
+                {
+                    text: "OK",
+                    onPress: () => {
+                        // Redireciona para o Mapa após o OK
+                        navigation.navigate('MapPage');
+                    }
+                }
+            ]
+        );
     }
 
     return (
@@ -217,7 +238,7 @@ export function AddPlaceForm({ initialCoordinate, initialData }) {
             />
 
             <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-                <Text style={styles.saveButtonText}>Salvar Local</Text>
+                <Text style={styles.saveButtonText}>{initialData ? "Atualizar Local" : "Salvar Local"}</Text>
             </TouchableOpacity>
 
         </View>

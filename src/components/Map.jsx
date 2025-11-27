@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, Modal, Alert } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, Modal, Alert, Image } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { PLACES_DATA } from '../data/places';
-import { getPinColor, ACCESSIBILITY_COLORS } from '../utils/acessibilityColors';
 
 const INITIAL_REGION = {
     latitude: -5.12056,
@@ -13,12 +12,26 @@ const INITIAL_REGION = {
     longitudeDelta: 0.015,
 };
 
+const MARKER_ICONS = {
+    'Motora': require('../../assets/markers/IconeMotora.png'),
+    'Visual': require('../../assets/markers/IconeVisual.png'),
+    'Motora e Visual': require('../../assets/markers/IconeAmbas.png'),
+    'Sugestão de melhoria': require('../../assets/markers/IconeFalta.png'),
+    'default': require('../../assets/markers/IconeFalta.png')
+};
+
+const TEMP_MARKER_ICON = require('../../assets/markers/IconeTemp.png');
+
+const getMarkerImage = (tipo) => {
+    return MARKER_ICONS[tipo] || MARKER_ICONS['default'];
+};
+
 // Legenda dinâmica baseada nas nossas constantes de cor
 const LEGEND_ITEMS = [
-    { color: ACCESSIBILITY_COLORS['Motora'], label: "Deficiência Motora" },
-    { color: ACCESSIBILITY_COLORS['Visual'], label: "Deficiência Visual" },
-    { color: ACCESSIBILITY_COLORS['Motora e Visual'], label: "Visual e Motora" },
-    { color: ACCESSIBILITY_COLORS['default'], label: "Sugestão de melhoria" },
+    { color: "#ff0100", label: "Deficiência Motora" },
+    { color: "#69ee0c", label: "Deficiência Visual" },
+    { color: "#3b6bff", label: "Motora e Visual" },
+    { color: "#d1cfce", label: "Nenhuma das opções" },
 ];
 
 export function Map() {
@@ -87,21 +100,34 @@ export function Map() {
                     <Marker
                         key={place.id}
                         coordinate={place.coordinate}
-                        // 3. COR DINÂMICA
-                        pinColor={getPinColor(place.tipo)}
+                        anchor={{ x: 0.5, y: 1.0 }}
                         onPress={(e) => {
                             e.stopPropagation();
                             setTempMarker(null);
                             handleSelectMarker(place);
                         }}
-                    />
+                    >
+                        {/* Imagem Personalizada */}
+                        <Image
+                            source={getMarkerImage(place.tipo)}
+                            style={styles.markerImage}
+                            resizeMode="contain"
+                        />
+                    </Marker>
                 ))}
+
                 {/* Marcador Temporário */}
                 {tempMarker && (
                     <Marker
                         coordinate={tempMarker.coordinate}
-                        pinColor="#eaff00"
-                    />
+                        anchor={{ x: 0.5, y: 1.0 }}
+                    >
+                        <Image
+                            source={TEMP_MARKER_ICON}
+                            style={styles.markerImage}
+                            resizeMode="contain"
+                        />
+                    </Marker>
                 )}
             </MapView>
 
@@ -120,8 +146,12 @@ export function Map() {
 
                         <Text style={styles.cardTitle}>{selectedMarker.nome}</Text>
                         <Text style={styles.cardAddress}>{selectedMarker.localizacao}</Text>
-
+                        <Text style={styles.cardResources}>
+                            <Text style={{ fontWeight: 'bold' }}>Recursos: </Text>
+                            {selectedMarker.recursos}
+                        </Text>
                         <Text style={styles.cardDescription}>
+                            <Text style={{ fontWeight: 'bold' }}>Descrição: </Text>
                             {selectedMarker.descricao}
                         </Text>
 
@@ -203,7 +233,7 @@ export function Map() {
 
             {/* Legenda */}
             <View style={styles.legendContainer}>
-                <Text style={styles.legendTitle}>Legenda:</Text>
+                <Text style={styles.legendTitle}>Suporte a:</Text>
                 <View style={styles.legendGrid}>
                     {LEGEND_ITEMS.map((item, index) => (
                         <View key={index} style={styles.legendItem}>
@@ -379,6 +409,7 @@ const styles = StyleSheet.create({
 
     // --- LEGENDA ---
     legendContainer: {
+        backgroundColor: '#e7ffefff',
         padding: 12,
         borderTopWidth: 1,
         borderTopColor: '#eee',
@@ -410,5 +441,11 @@ const styles = StyleSheet.create({
     legendText: {
         fontSize: 12,
         color: '#333',
-    }
+    },
+
+    // Marcador
+    markerImage: {
+        width: 35,
+        height: 35,
+    },
 });
