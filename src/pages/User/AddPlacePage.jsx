@@ -1,5 +1,12 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet, StatusBar } from 'react-native';
+import {
+    View,
+    ScrollView,
+    StyleSheet,
+    StatusBar,
+    KeyboardAvoidingView,
+    Platform
+} from 'react-native';
 import { Navbar } from '../../components/Navbar';
 import { Footer } from '../../components/Footer';
 import { AddPlaceForm } from '../../components/AddPlaceForm';
@@ -14,19 +21,28 @@ export function AddPlacePage({ route }) {
 
             <Navbar />
 
-            <ScrollView contentContainerStyle={styles.scrollContent}>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1 }}
+            >
 
-                <View style={styles.formArea}>
-                    {/* Passamos a coordenada e os dados do local para o formulário */}
-                    <AddPlaceForm
-                        initialCoordinate={coordinate}
-                        initialData={placeData}
-                    />
-                </View>
+                <ScrollView
+                    contentContainerStyle={styles.scrollContent}
+                    keyboardShouldPersistTaps="handled"
+                >
 
-                <Footer />
+                    <View style={styles.formArea}>
+                        {/* Passamos a coordenada e os dados do local para o formulário */}
+                        <AddPlaceForm
+                            initialCoordinate={coordinate}
+                            initialData={placeData}
+                        />
+                    </View>
 
-            </ScrollView>
+                    <Footer />
+
+                </ScrollView>
+            </KeyboardAvoidingView>
         </View>
     );
 }
@@ -41,7 +57,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     formArea: {
-        padding: 16, // Margem externa para o card não colar na borda
+        padding: 16,
         width: '100%',
     },
 });

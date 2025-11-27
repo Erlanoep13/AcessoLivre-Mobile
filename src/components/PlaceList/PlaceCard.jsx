@@ -7,6 +7,7 @@ export function PlaceCard({
   address,
   accessibility,
   description,
+  recursos,
   onEdit,
 }) {
   const [isFavorite, setIsFavorite] = useState(false);
@@ -37,6 +38,10 @@ export function PlaceCard({
         Acessibilidade: <Text style={styles.value}>{accessibility}</Text>
       </Text>
 
+      <Text style={styles.label}>
+        Recursos: <Text style={styles.value}>{recursos}</Text>
+      </Text>
+      
       <Text style={styles.label}>
         Descrição: <Text style={styles.value}>{description}</Text>
       </Text>

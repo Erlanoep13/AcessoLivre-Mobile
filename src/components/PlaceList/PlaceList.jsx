@@ -12,6 +12,7 @@ export function PlaceList({ onEditPress }) {
           name={place.nome}
           address={place.localizacao}
           accessibility={place.tipo}
+          recursos={place.recursos}
           description={place.descricao}
           onEdit={() => onEditPress(place)}
           onFavorite={() => console.log('Favoritar', place.id)}

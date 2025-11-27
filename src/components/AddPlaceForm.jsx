@@ -95,14 +95,29 @@ export function AddPlaceForm({ initialCoordinate, initialData }) {
     };
 
     function handleSave() {
-        console.log("Salvando local:", { nome, localizacao, tipo, categoria, recursos, descricao, image });
+        const camposFaltantes = [];
+
+        if (!nome.trim()) camposFaltantes.push("Nome do Local");
+        if (!localizacao.trim()) camposFaltantes.push("Localização");
+        if (!recursos.trim()) camposFaltantes.push("Recursos de Acessibilidade");
+        if (!tipo) camposFaltantes.push("Tipo de Acessibilidade");
+
+        // Se houver algum item na lista, mostra o erro específico
+        if (camposFaltantes.length > 0) {
+            Alert.alert(
+                "Atenção",
+                `Por favor, preencha os seguintes campos:\n\n• ${camposFaltantes.join("\n• ")}`
+            );
+            return;
+        }
+
         Alert.alert("Sucesso", "Dados prontos para envio!");
     }
 
     return (
         <View style={styles.card}>
 
-            <Text style={styles.label}>Nome do Local:</Text>
+            <Text style={styles.label}>Nome do Local: <Text style={styles.required}>*</Text></Text>
             <TextInput
                 style={styles.input}
                 placeholder="Ex: Escola..."
@@ -111,7 +126,7 @@ export function AddPlaceForm({ initialCoordinate, initialData }) {
                 onChangeText={setNome}
             />
 
-            <Text style={styles.label}>Localização:</Text>
+            <Text style={styles.label}>Localização: <Text style={styles.required}>*</Text></Text>
             <TextInput
                 style={styles.input}
                 placeholder="Ex: Centro, Rua 26 de Junho, 128"
@@ -120,7 +135,7 @@ export function AddPlaceForm({ initialCoordinate, initialData }) {
                 onChangeText={setLocalizacao}
             />
 
-            <Text style={styles.label}>Tipo de Acessibilidade:</Text>
+            <Text style={styles.label}>Tipo de Acessibilidade: <Text style={styles.required}>*</Text></Text>
             <View style={styles.pickerContainer}>
                 <Picker
                     selectedValue={tipo}
@@ -144,7 +159,7 @@ export function AddPlaceForm({ initialCoordinate, initialData }) {
                 onChangeText={setCategoria}
             />
 
-            <Text style={styles.label}>Recursos de Acessibilidade Presentes:</Text>
+            <Text style={styles.label}>Recursos de Acessibilidade Presentes: <Text style={styles.required}>*</Text></Text>
             <TextInput
                 style={styles.input}
                 placeholder="Ex: Rampas, Braille..."
@@ -331,6 +346,10 @@ const styles = StyleSheet.create({
     saveButtonText: {
         color: '#fff',
         fontSize: 16,
+        fontWeight: 'bold',
+    },
+    required: {
+        color: '#d32f2fb9',
         fontWeight: 'bold',
     },
 });
