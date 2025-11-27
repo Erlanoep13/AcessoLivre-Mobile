@@ -4,7 +4,7 @@ export const PLACES_DATA = [
     nome: "Praça da Matriz",
     localizacao: "Boa Viagem - Centro",
     descricao: "Vaga de estacionamento para pessoas com deficiência e rampa de acesso.",
-    tipo: "Motora e Visual",
+    tipo: "Motora",
     coordinate: { latitude: -5.126254, longitude: -39.729998 },
     categoria: "Lazer", 
     recursos: "Rampa"

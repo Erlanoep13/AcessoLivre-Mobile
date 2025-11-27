@@ -94,25 +94,27 @@ export function Map() {
             <MapView
                 style={styles.map}
                 initialRegion={INITIAL_REGION}
-                onPress={handleMapPress} // Detecta clique fora do marcador
+                onPress={handleMapPress}
             >
                 {PLACES_DATA.map((place) => (
                     <Marker
                         key={place.id}
                         coordinate={place.coordinate}
+
+                        image={getMarkerImage(place.tipo)}
+
+                        // Android: x=0.5 (meio horizontal), y=1.0 (base inferior)
                         anchor={{ x: 0.5, y: 1.0 }}
+                        // iOS: Desloca o centro para cima (metade da altura da imagem, aprox -20px)
+                        centerOffset={{ x: 0, y: -20 }}
+
                         onPress={(e) => {
                             e.stopPropagation();
                             setTempMarker(null);
                             handleSelectMarker(place);
                         }}
                     >
-                        {/* Imagem Personalizada */}
-                        <Image
-                            source={getMarkerImage(place.tipo)}
-                            style={styles.markerImage}
-                            resizeMode="contain"
-                        />
+
                     </Marker>
                 ))}
 
@@ -120,14 +122,10 @@ export function Map() {
                 {tempMarker && (
                     <Marker
                         coordinate={tempMarker.coordinate}
+                        image={TEMP_MARKER_ICON} // Use a imagem importada
                         anchor={{ x: 0.5, y: 1.0 }}
-                    >
-                        <Image
-                            source={TEMP_MARKER_ICON}
-                            style={styles.markerImage}
-                            resizeMode="contain"
-                        />
-                    </Marker>
+                        centerOffset={{ x: 0, y: -20 }}
+                    />
                 )}
             </MapView>
 
