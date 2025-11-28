@@ -16,7 +16,7 @@ const Stack = createNativeStackNavigator();
 export function Routes() {
   return (
     <Stack.Navigator 
-      initialRouteName="MapPage" // Define qual tela abre primeiro
+      initialRouteName="Login" // Define qual tela abre primeiro
       screenOptions={{ 
         headerShown: false // Esconde o cabeçalho padrão feio do Android/iOS
       }}

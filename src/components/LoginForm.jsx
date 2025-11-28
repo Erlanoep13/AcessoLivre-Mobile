@@ -1,15 +1,30 @@
 // LoginForm.jsx
 
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+
+// 1. IMPORTAR O HOOK DE NAVEGAÇÃO
+import { useNavigation } from '@react-navigation/native';
 
 export function LoginForm() {
+  // 2. ATIVAR A NAVEGAÇÃO
+  const navigation = useNavigation();
+
   const [nome, setNome] = useState('');
   const [chaveAcesso, setChaveAcesso] = useState('');
 
   function handleLogin() {
+    // Validação simples
+    if (!chaveAcesso.trim()) {
+      Alert.alert('Erro', 'Por favor, digite sua chave de acesso.');
+      return;
+    }
+
     console.log('Logando com:', nome, chaveAcesso);
-    // TODO: função de autenticação
+    
+    // Se o login der certo, vai para o Mapa
+    // Verifique se o nome da rota no routes.jsx é 'MapPage'
+    navigation.navigate('MapPage'); 
   }
 
   return (
@@ -23,6 +38,11 @@ export function LoginForm() {
       {/* Card Branco */}
       <View style={styles.card}>
 
+        {/* Nota: Se no cadastro agora pedimos APENAS a chave numérica,
+            talvez não precise pedir o "Nome" aqui no Login, apenas a chave.
+            Mas mantive o campo Nome conforme seu código original.
+        */}
+
         <Text style={styles.label}>Nome</Text>
         <TextInput
           style={styles.input}
@@ -35,8 +55,9 @@ export function LoginForm() {
         <Text style={styles.label}>Chave de acesso</Text>
         <TextInput
           style={styles.input}
-          placeholder="Sua chave"
+          placeholder="Sua chave (apenas números)"
           placeholderTextColor="#ccc"
+          keyboardType="numeric" // Teclado numérico para facilitar
           secureTextEntry={true}
           value={chaveAcesso}
           onChangeText={setChaveAcesso}
@@ -49,7 +70,11 @@ export function LoginForm() {
       </View>
 
       {/* Link Criar Conta */}
-      <TouchableOpacity style={styles.createAccountContainer}>
+      <TouchableOpacity 
+        style={styles.createAccountContainer}
+        // 3. AQUI ESTÁ A MÁGICA:
+        onPress={() => navigation.navigate('Register')}
+      >
         <Text style={styles.createAccountText}>Criar conta</Text>
       </TouchableOpacity>
 
