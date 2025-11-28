@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { Navbar } from '../../components/Navbar';
 import { Footer } from '../../components/Footer';
-import { PlaceList } from '../../components/PlaceList/PlaceList';
+import { FavoriteCard } from '../../components/FavoriteCard';
 
 
 export function FavoritePage() {
@@ -20,7 +20,7 @@ export function FavoritePage() {
           <Text style={styles.pageSubtitle}>Seus locais salvos aparecem aqui.
           </Text>
 
-        <PlaceList />
+        <FavoriteCard />
           
 
         </View>
