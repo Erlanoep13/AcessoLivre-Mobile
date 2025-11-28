@@ -40,9 +40,9 @@ export function AboutPage() {
 
           {/* Lista da Equipe */}
           <View style={styles.teamContainer}>
-            <TeamMember name="Marcos" role="Dev Frontend" icon="code" />
-            <TeamMember name="Erlano" role="Dev Fullstack" icon="layers" />
-            <TeamMember name="Rafael" role="Dev Mobile" icon="smartphone" />
+            <TeamMember name="Marcos" role="Dev Fullstack" icon="code" />
+            <TeamMember name="Erlano" role="Dev Fullstack" icon="code" />
+            <TeamMember name="Rafael" role="Dev Fullstack" icon="code" />
           </View>
         </View>
 

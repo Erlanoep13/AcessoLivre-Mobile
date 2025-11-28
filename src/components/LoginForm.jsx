@@ -38,11 +38,6 @@ export function LoginForm() {
       {/* Card Branco */}
       <View style={styles.card}>
 
-        {/* Nota: Se no cadastro agora pedimos APENAS a chave numérica,
-            talvez não precise pedir o "Nome" aqui no Login, apenas a chave.
-            Mas mantive o campo Nome conforme seu código original.
-        */}
-
         <Text style={styles.label}>Nome</Text>
         <TextInput
           style={styles.input}

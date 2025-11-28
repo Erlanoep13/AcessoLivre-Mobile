@@ -1,17 +1,20 @@
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+
 import { Navbar } from '../../components/Navbar';
 import { SearchBar } from '../../components/SearchBar';
 import { Footer } from '../../components/Footer';
 import { PlaceList } from '../../components/PlaceList/PlaceList';
 import { Map } from '../../components/Map';
+import { ExplicaçoesGerais } from '../../components/ExplicaçoesGerais'; 
+
 // Importamos o contexto para ler o nome
 import { useUser } from '../../contexts/UserContext'; 
 
 export function MapPage() {
   const navigation = useNavigation();
-  const { username } = useUser(); // Pega o nome salvo na memória
+  const { username } = useUser(); 
 
   return (
     <View style={styles.container}>
@@ -28,7 +31,6 @@ export function MapPage() {
         </View>
 
         {/* --- MENSAGEM DE BOAS-VINDAS --- */}
-        {/* Só aparece se tiver alguém logado (username existe) */}
         {username && (
           <View style={styles.welcomeContainer}>
             <Text style={styles.welcomeText}>
@@ -64,6 +66,14 @@ export function MapPage() {
 
       </ScrollView>
 
+      {/* --- O BOTÃO FLUTUANTE (FORA DO SCROLLVIEW) --- 
+         Coloquei aqui fora para ele ficar fixo na tela ("voando" sobre o conteúdo)
+         igual ao da imagem que você mandou.
+      */}
+      <View style={styles.floatingButtonContainer}>
+          <ExplicaçoesGerais />
+      </View>
+
     </View>
   );
 }
@@ -84,7 +94,15 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   
-  // Estilos novos da mensagem
+  // --- ESTILO DO BOTÃO FLUTUANTE ---
+  floatingButtonContainer: {
+    position: 'absolute', // Isso faz ele flutuar
+    bottom: 40,           // Distância do fundo (ajuste para não cobrir o Footer se quiser)
+    right: 5,            // Distância da direita
+    zIndex: 999,          // Garante que fique por cima de tudo
+  },
+
+  // Estilos da mensagem
   welcomeContainer: {
     paddingHorizontal: 16,
     marginBottom: 10,
@@ -92,22 +110,13 @@ const styles = StyleSheet.create({
   },
   welcomeText: {
     fontSize: 18,
-    color: '#fff', // Texto branco pra contrastar com o fundo verde escuro
+    color: '#fff', 
   },
   nameHighlight: {
     fontWeight: 'bold',
-    color: '#ffffffff', // Verde claro igual ao botão
+    color: '#ffffffff', 
   },
-
-  placeholderBox: {
-    height: 400,
-    backgroundColor: '#E5E7EB',
-    borderRadius: 8,
-    marginBottom: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  //Estilo do botão
+  // Estilo do botão adicionar
   addButtonContainer: {
     alignItems: 'center',
     marginBottom: 10,

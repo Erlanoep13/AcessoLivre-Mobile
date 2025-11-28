@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
-export function ExplicaçõesGerais() {
+export function ExplicaçoesGerais() {
   const [modalVisible, setModalVisible] = useState(false);
 
   return (

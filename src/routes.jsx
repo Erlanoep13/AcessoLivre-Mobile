@@ -16,7 +16,7 @@ const Stack = createNativeStackNavigator();
 export function Routes() {
   return (
     <Stack.Navigator 
-      initialRouteName="Login" // Define qual tela abre primeiro
+      initialRouteName="MapPage" // Define qual tela abre primeiro
       screenOptions={{ 
         headerShown: false // Esconde o cabeçalho padrão feio do Android/iOS
       }}
@@ -26,7 +26,7 @@ export function Routes() {
       <Stack.Screen name="Favorites" component={FavoritePage} />
       <Stack.Screen name="Register" component={RegisterPage} />
       <Stack.Screen name="Login" component={LoginPage} />
-      <Stack.Screen name="About" component={AboutPage} />
+      <Stack.Screen name="AboutPage" component={AboutPage} />
       <Stack.Screen name="Admin" component={AdminPage} />
       <Stack.Screen name="AddRequest" component={AddRequestPage} />
       <Stack.Screen name="EditRequest" component={EditRequestsPage} />
