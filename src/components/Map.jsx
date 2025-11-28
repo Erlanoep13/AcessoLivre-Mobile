@@ -32,7 +32,7 @@ const LEGEND_ITEMS = [
     { color: "#ff0100", label: "Deficiência Motora" },
     { color: "#69ee0c", label: "Deficiência Visual" },
     { color: "#3b6bff", label: "Motora e Visual" },
-    { color: "#d1cfce", label: "Nenhuma das opções" },
+    { color: "#d1cfce", label: "Sugestões de melhoria" },
 ];
 
 export function Map() {

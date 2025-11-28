@@ -8,31 +8,31 @@ import { AdminQuickActions } from '../../components/AdminQuickActions';
 export function AdminPage() {
   return (
     <View style={styles.container}>
-      
+
       {/* Navbar no topo */}
       <Navbar />
 
       <ScrollView style={styles.scrollContainer}>
         <View style={styles.content}>
-          <Text style={styles.pageTitle}>Painel do Administrador</Text>
-         
+          <Text style={styles.pageTitle}>Locais marcados</Text>
+
           <AdminChart />
           {/* Botões de Ação Rápida */}
-          <AdminQuickActions 
-          addRequests={2}     // Exemplo: 2 pedidos de adição
-          editRequests={6}    // Exemplo: 6 pedidos de edição
-          removeRequests={0}  // 0 pedidos de remoção
-          onPressAdd={() => console.log('Ver adições')}
-          onPressEdit={() => console.log('Ver edições')}
-          onPressRemove={() => console.log('Ver remoções')}
-        />
+          <AdminQuickActions
+            addRequests={2}     // Exemplo: 2 pedidos de adição
+            editRequests={6}    // Exemplo: 6 pedidos de edição
+            removeRequests={0}  // 0 pedidos de remoção
+            onPressAdd={() => console.log('Ver adições')}
+            onPressEdit={() => console.log('Ver edições')}
+            onPressRemove={() => console.log('Ver remoções')}
+          />
         </View>
 
         {/* Footer no final */}
         <Footer />
 
       </ScrollView>
-      
+
     </View>
   );
 }

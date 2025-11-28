@@ -66,10 +66,7 @@ export function MapPage() {
 
       </ScrollView>
 
-      {/* --- O BOTÃO FLUTUANTE (FORA DO SCROLLVIEW) --- 
-         Coloquei aqui fora para ele ficar fixo na tela ("voando" sobre o conteúdo)
-         igual ao da imagem que você mandou.
-      */}
+      {/* --- O BOTÃO FLUTUANTE (FORA DO SCROLLVIEW) ---*/}
       <View style={styles.floatingButtonContainer}>
           <ExplicaçoesGerais />
       </View>
@@ -97,9 +94,9 @@ const styles = StyleSheet.create({
   // --- ESTILO DO BOTÃO FLUTUANTE ---
   floatingButtonContainer: {
     position: 'absolute', // Isso faz ele flutuar
-    bottom: 40,           // Distância do fundo (ajuste para não cobrir o Footer se quiser)
-    right: 5,            // Distância da direita
-    zIndex: 999,          // Garante que fique por cima de tudo
+    bottom: 30,
+    right: 5,
+    zIndex: 999,
   },
 
   // Estilos da mensagem

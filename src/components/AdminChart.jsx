@@ -4,10 +4,10 @@ import Svg, { G, Path } from 'react-native-svg';
 
 // Dados Iguais aos da sua imagem
 const MOCK_DATA = [
-  { name: 'Deficiência Motora', value: 35, color: '#dc2626' }, 
-  { name: 'Deficiência Visual', value: 20, color: '#4ade80' },   
-  { name: 'Deficiência Motora e Visual              ', value: 20, color: '#2563eb' }, 
-  { name: 'Sugestão de Melhoria', value: 25, color: '#4b5563' }, 
+  { name: 'Deficiência Motora', value: 35, color: '#dc2626' },
+  { name: 'Deficiência Visual', value: 20, color: '#4ade80' },
+  { name: 'Deficiência Motora e Visual', value: 20, color: '#2563eb' },
+  { name: 'Sugestão de Melhoria', value: 25, color: '#d1cfce' },
 ];
 
 export function AdminChart() {
@@ -30,7 +30,7 @@ export function AdminChart() {
 
   return (
     <View style={styles.card}>
-      
+
 
       {/* Container do Gráfico (Centralizado) */}
       <View style={styles.chartWrapper}>
@@ -42,7 +42,7 @@ export function AdminChart() {
 
               // Calcula o ponto final do arco na borda
               const end = polarToCartesian(center, center, radius, endAngle);
-              
+
               const largeArcFlag = sliceAngle <= 180 ? '0' : '1';
 
               // Caminho da fatia de pizza:
@@ -50,7 +50,7 @@ export function AdminChart() {
               // 2. Desenha linha até o início do arco (L start.x, start.y) - Opcional se começar do zero
               // 3. Desenha o arco (A ...)
               // 4. Fecha o caminho voltando ao centro (Z)
-              
+
               // Ponto inicial do arco
               const start = polarToCartesian(center, center, radius, startAngle);
 

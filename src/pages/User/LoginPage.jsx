@@ -21,7 +21,7 @@ export function LoginPage() {
                     <LoginForm />
                 </View>
 
-                {/* 3. Footer no final do scroll */}
+                {/* Footer no final do scroll */}
                 <Footer />
 
             </ScrollView>

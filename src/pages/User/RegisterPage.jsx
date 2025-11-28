@@ -27,7 +27,6 @@ export function RegisterPage() {
             return;
         }
 
-        // --- MUDANÇA AQUI ---
         // Por enquanto, definimos a chave fixar como "1".
         // Futuramente, isso virá da resposta do seu backend/banco de dados.
         setAccessKey("1");
