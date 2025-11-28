@@ -8,10 +8,11 @@ import {
   Alert 
 } from 'react-native';
 import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
+// 1. Importei a Navbar
+import { Navbar } from '../../components/Navbar';
 import { Footer } from '../../components/Footer';
 
 export function RemoveRequestsPage() {
-  // Dados fictícios para simular pedidos vindos da API/Base de dados
   const [requests, setRequests] = useState([
     { 
       id: 1, 
@@ -36,7 +37,6 @@ export function RemoveRequestsPage() {
     }
   ]);
 
-  // Função para simular a aprovação da remoção (Deletar o local)
   const handleApproveRemoval = (id) => {
     Alert.alert(
       "Confirmar Remoção",
@@ -47,7 +47,6 @@ export function RemoveRequestsPage() {
           text: "Remover", 
           style: 'destructive',
           onPress: () => {
-            // Aqui entraria a lógica de apagar na base de dados
             setRequests(requests.filter(item => item.id !== id));
             Alert.alert("Sucesso", "Local removido com sucesso!");
           } 
@@ -56,15 +55,17 @@ export function RemoveRequestsPage() {
     );
   };
 
-  // Função para rejeitar o pedido (Manter o local)
   const handleRejectRemoval = (id) => {
-    // Apenas removemos o pedido da lista, mas o local continua no mapa
     setRequests(requests.filter(item => item.id !== id));
     Alert.alert("Informação", "Pedido rejeitado. O local foi mantido.");
   };
 
   return (
     <View style={styles.container}>
+      
+      {/* 2. Coloquei a Navbar aqui no topo */}
+      <Navbar />
+
       <ScrollView contentContainerStyle={styles.scrollContent}>
         
         {/* Cabeçalho da Página */}

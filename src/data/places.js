@@ -14,7 +14,7 @@ export const PLACES_DATA = [
     nome: "IFCE - Campus Boa Viagem",
     localizacao: "Rod. Pres. Juscelino Kubitschek",
     descricao: "Rampas e Banheiros Adaptados",
-    tipo: "Visual",
+    tipo: "Sugestão de melhoria",
     coordinate: { latitude: -5.082886, longitude: -39.706610 },
     categoria: "Educação",
     recursos: "Banheiros"

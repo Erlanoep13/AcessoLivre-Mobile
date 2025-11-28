@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, Modal, Alert } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, Modal, Alert, Image } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { PLACES_DATA } from '../data/places';
-import { getPinColor, ACCESSIBILITY_COLORS } from '../utils/acessibilityColors';
+import { RemoveModal } from './RemoveModal';
 
 const INITIAL_REGION = {
     latitude: -5.12056,
@@ -13,12 +13,26 @@ const INITIAL_REGION = {
     longitudeDelta: 0.015,
 };
 
+const MARKER_ICONS = {
+    'Motora': require('../../assets/markers/IconeMotora.png'),
+    'Visual': require('../../assets/markers/IconeVisual.png'),
+    'Motora e Visual': require('../../assets/markers/IconeAmbas.png'),
+    'Sugestão de melhoria': require('../../assets/markers/IconeFalta.png'),
+    'default': require('../../assets/markers/IconeFalta.png')
+};
+
+const TEMP_MARKER_ICON = require('../../assets/markers/IconeTemp.png');
+
+const getMarkerImage = (tipo) => {
+    return MARKER_ICONS[tipo] || MARKER_ICONS['default'];
+};
+
 // Legenda dinâmica baseada nas nossas constantes de cor
 const LEGEND_ITEMS = [
-    { color: ACCESSIBILITY_COLORS['Motora'], label: "Deficiência Motora" },
-    { color: ACCESSIBILITY_COLORS['Visual'], label: "Deficiência Visual" },
-    { color: ACCESSIBILITY_COLORS['Motora e Visual'], label: "Visual e Motora" },
-    { color: ACCESSIBILITY_COLORS['default'], label: "Sugestão de melhoria" },
+    { color: "#ff0100", label: "Deficiência Motora" },
+    { color: "#69ee0c", label: "Deficiência Visual" },
+    { color: "#3b6bff", label: "Motora e Visual" },
+    { color: "#d1cfce", label: "Nenhuma das opções" },
 ];
 
 export function Map() {
@@ -28,6 +42,7 @@ export function Map() {
     const [tempMarker, setTempMarker] = useState(null);
     const [selectedMarker, setSelectedMarker] = useState(null);
     const [isCardFavorite, setIsCardFavorite] = useState(false);
+    const [isRemoveModalVisible, setRemoveModalVisible] = useState(false);
 
     const handleSelectMarker = (marker) => {
         setIsCardFavorite(false);
@@ -35,21 +50,14 @@ export function Map() {
     };
 
     // Função de Deletar
-    const handleDelete = () => {
-        Alert.alert(
-            "Remover Local",
-            "Tem certeza que deseja remover este local?",
-            [
-                { text: "Cancelar", style: "cancel" },
-                {
-                    text: "Sim, remover",
-                    onPress: () => {
-                        Alert.alert("Sucesso", "Pedido de remoção do local enviado para o administrador.");
-                        setSelectedMarker(null); // Fecha o card após "deletar"
-                    }
-                }
-            ]
-        );
+    const handleDeletePress = () => {
+        setRemoveModalVisible(true);
+    };
+
+    const confirmDelete = (motivo) => {
+        setRemoveModalVisible(false);
+        setSelectedMarker(null); // Fecha o card do local
+        Alert.alert("Sucesso", `Pedido de remoção enviado!\nMotivo: ${motivo}`);
     };
 
     const handleMapPress = (e) => {
@@ -81,26 +89,37 @@ export function Map() {
             <MapView
                 style={styles.map}
                 initialRegion={INITIAL_REGION}
-                onPress={handleMapPress} // Detecta clique fora do marcador
+                onPress={handleMapPress}
             >
                 {PLACES_DATA.map((place) => (
                     <Marker
                         key={place.id}
                         coordinate={place.coordinate}
-                        // 3. COR DINÂMICA
-                        pinColor={getPinColor(place.tipo)}
+
+                        image={getMarkerImage(place.tipo)}
+
+                        // Android: x=0.5 (meio horizontal), y=1.0 (base inferior)
+                        anchor={{ x: 0.5, y: 1.0 }}
+                        // iOS: Desloca o centro para cima (metade da altura da imagem, aprox -20px)
+                        centerOffset={{ x: 0, y: -20 }}
+
                         onPress={(e) => {
                             e.stopPropagation();
                             setTempMarker(null);
                             handleSelectMarker(place);
                         }}
-                    />
+                    >
+
+                    </Marker>
                 ))}
+
                 {/* Marcador Temporário */}
                 {tempMarker && (
                     <Marker
                         coordinate={tempMarker.coordinate}
-                        pinColor="#eaff00"
+                        image={TEMP_MARKER_ICON} // Use a imagem importada
+                        anchor={{ x: 0.5, y: 1.0 }}
+                        centerOffset={{ x: 0, y: -20 }}
                     />
                 )}
             </MapView>
@@ -120,8 +139,12 @@ export function Map() {
 
                         <Text style={styles.cardTitle}>{selectedMarker.nome}</Text>
                         <Text style={styles.cardAddress}>{selectedMarker.localizacao}</Text>
-
+                        <Text style={styles.cardResources}>
+                            <Text style={{ fontWeight: 'bold' }}>Recursos: </Text>
+                            {selectedMarker.recursos}
+                        </Text>
                         <Text style={styles.cardDescription}>
+                            <Text style={{ fontWeight: 'bold' }}>Descrição: </Text>
                             {selectedMarker.descricao}
                         </Text>
 
@@ -149,7 +172,7 @@ export function Map() {
                             </TouchableOpacity>
 
                             {/* Botão Deletar */}
-                            <TouchableOpacity style={styles.actionBtn} onPress={handleDelete}>
+                            <TouchableOpacity style={styles.actionBtn} onPress={handleDeletePress}>
                                 <Feather name="trash-2" size={20} color="#333" />
                             </TouchableOpacity>
                         </View>
@@ -203,7 +226,7 @@ export function Map() {
 
             {/* Legenda */}
             <View style={styles.legendContainer}>
-                <Text style={styles.legendTitle}>Legenda:</Text>
+                <Text style={styles.legendTitle}>Suporte a:</Text>
                 <View style={styles.legendGrid}>
                     {LEGEND_ITEMS.map((item, index) => (
                         <View key={index} style={styles.legendItem}>
@@ -232,7 +255,11 @@ export function Map() {
                     </TouchableOpacity>
                 </View>
             </Modal>
-
+            <RemoveModal
+                visible={isRemoveModalVisible}
+                onClose={() => setRemoveModalVisible(false)}
+                onConfirm={confirmDelete}
+            />
         </View>
     );
 }
@@ -379,6 +406,7 @@ const styles = StyleSheet.create({
 
     // --- LEGENDA ---
     legendContainer: {
+        backgroundColor: '#e7ffefff',
         padding: 12,
         borderTopWidth: 1,
         borderTopColor: '#eee',
@@ -410,5 +438,11 @@ const styles = StyleSheet.create({
     legendText: {
         fontSize: 12,
         color: '#333',
-    }
+    },
+
+    // Marcador
+    markerImage: {
+        width: 35,
+        height: 35,
+    },
 });

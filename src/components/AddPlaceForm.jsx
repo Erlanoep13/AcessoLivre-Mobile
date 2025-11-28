@@ -4,8 +4,11 @@ import { Feather } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
 import { Picker } from '@react-native-picker/picker';
+import { useNavigation } from '@react-navigation/native';
 
 export function AddPlaceForm({ initialCoordinate, initialData }) {
+    const navigation = useNavigation();
+
     const [nome, setNome] = useState('');
     const [localizacao, setLocalizacao] = useState('');
     const [tipo, setTipo] = useState('Sugestão de melhoria');
@@ -95,14 +98,47 @@ export function AddPlaceForm({ initialCoordinate, initialData }) {
     };
 
     function handleSave() {
-        console.log("Salvando local:", { nome, localizacao, tipo, categoria, recursos, descricao, image });
-        Alert.alert("Sucesso", "Dados prontos para envio!");
+        const camposFaltantes = [];
+
+        if (!nome.trim()) camposFaltantes.push("Nome do Local");
+        if (!localizacao.trim()) camposFaltantes.push("Localização");
+        if (!recursos.trim()) camposFaltantes.push("Recursos de Acessibilidade");
+        if (!tipo) camposFaltantes.push("Tipo de Acessibilidade");
+
+        // Se houver algum item na lista, mostra o erro específico
+        if (camposFaltantes.length > 0) {
+            Alert.alert(
+                "Atenção",
+                `Por favor, preencha os seguintes campos:\n\n• ${camposFaltantes.join("\n• ")}`
+            );
+            return;
+        }
+
+        const isEdit = !!initialData; // Se initialData existe, é edição
+        const titulo = "Sucesso";
+        const mensagem = isEdit
+            ? "Pedido de edição enviado para o administrador."
+            : "Pedido de adição enviado para o administrador.";
+
+        Alert.alert(
+            titulo,
+            mensagem,
+            [
+                {
+                    text: "OK",
+                    onPress: () => {
+                        // Redireciona para o Mapa após o OK
+                        navigation.navigate('MapPage');
+                    }
+                }
+            ]
+        );
     }
 
     return (
         <View style={styles.card}>
 
-            <Text style={styles.label}>Nome do Local:</Text>
+            <Text style={styles.label}>Nome do Local: <Text style={styles.required}>*</Text></Text>
             <TextInput
                 style={styles.input}
                 placeholder="Ex: Escola..."
@@ -111,7 +147,7 @@ export function AddPlaceForm({ initialCoordinate, initialData }) {
                 onChangeText={setNome}
             />
 
-            <Text style={styles.label}>Localização:</Text>
+            <Text style={styles.label}>Localização: <Text style={styles.required}>*</Text></Text>
             <TextInput
                 style={styles.input}
                 placeholder="Ex: Centro, Rua 26 de Junho, 128"
@@ -120,7 +156,7 @@ export function AddPlaceForm({ initialCoordinate, initialData }) {
                 onChangeText={setLocalizacao}
             />
 
-            <Text style={styles.label}>Tipo de Acessibilidade:</Text>
+            <Text style={styles.label}>Tipo de Acessibilidade: <Text style={styles.required}>*</Text></Text>
             <View style={styles.pickerContainer}>
                 <Picker
                     selectedValue={tipo}
@@ -144,7 +180,7 @@ export function AddPlaceForm({ initialCoordinate, initialData }) {
                 onChangeText={setCategoria}
             />
 
-            <Text style={styles.label}>Recursos de Acessibilidade Presentes:</Text>
+            <Text style={styles.label}>Recursos de Acessibilidade Presentes: <Text style={styles.required}>*</Text></Text>
             <TextInput
                 style={styles.input}
                 placeholder="Ex: Rampas, Braille..."
@@ -202,7 +238,7 @@ export function AddPlaceForm({ initialCoordinate, initialData }) {
             />
 
             <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-                <Text style={styles.saveButtonText}>Salvar Local</Text>
+                <Text style={styles.saveButtonText}>{initialData ? "Atualizar Local" : "Salvar Local"}</Text>
             </TouchableOpacity>
 
         </View>
@@ -331,6 +367,10 @@ const styles = StyleSheet.create({
     saveButtonText: {
         color: '#fff',
         fontSize: 16,
+        fontWeight: 'bold',
+    },
+    required: {
+        color: '#d32f2fb9',
         fontWeight: 'bold',
     },
 });
