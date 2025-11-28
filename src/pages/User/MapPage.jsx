@@ -1,14 +1,17 @@
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet, StatusBar, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Navbar } from '../../components/Navbar';
 import { SearchBar } from '../../components/SearchBar';
 import { Footer } from '../../components/Footer';
 import { PlaceList } from '../../components/PlaceList/PlaceList';
 import { Map } from '../../components/Map';
+// Importamos o contexto para ler o nome
+import { useUser } from '../../contexts/UserContext'; 
 
 export function MapPage() {
   const navigation = useNavigation();
+  const { username } = useUser(); // Pega o nome salvo na memória
 
   return (
     <View style={styles.container}>
@@ -23,6 +26,16 @@ export function MapPage() {
         <View style={styles.spacing}>
           <SearchBar />
         </View>
+
+        {/* --- MENSAGEM DE BOAS-VINDAS --- */}
+        {/* Só aparece se tiver alguém logado (username existe) */}
+        {username && (
+          <View style={styles.welcomeContainer}>
+            <Text style={styles.welcomeText}>
+              Seja bem-vindo(a), <Text style={styles.nameHighlight}>{username}!</Text>
+            </Text>
+          </View>
+        )}
 
         <View style={styles.content}>
 
@@ -46,7 +59,7 @@ export function MapPage() {
 
         </View>
 
-        {/* 4. MOSTRANDO O FOOTER (Fica no final da rolagem) */}
+        {/* FOOTER */}
         <Footer />
 
       </ScrollView>
@@ -69,6 +82,21 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 16,
     marginBottom: 20,
+  },
+  
+  // Estilos novos da mensagem
+  welcomeContainer: {
+    paddingHorizontal: 16,
+    marginBottom: 10,
+    alignItems: 'center', 
+  },
+  welcomeText: {
+    fontSize: 18,
+    color: '#fff', // Texto branco pra contrastar com o fundo verde escuro
+  },
+  nameHighlight: {
+    fontWeight: 'bold',
+    color: '#ffffffff', // Verde claro igual ao botão
   },
 
   placeholderBox: {
