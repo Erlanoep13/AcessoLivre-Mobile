@@ -11,18 +11,31 @@ export function LoginForm() {
   const { setUsername } = useUser();
 
   function handleLogin() {
+    // 1. Validação simples
     if (nome.trim() === '') {
        Alert.alert('Atenção', 'Por favor, digite o seu nome.');
        return;
     }
 
+    // 2. Salva o nome na memória do app (seja admin ou user)
     setUsername(nome);
 
-    // CORREÇÃO AQUI: O nome da rota é 'MapPage', igual está no seu routes.jsx
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'MapPage' }], 
-    });
+    // 3. Verifica se é o Admin e redireciona
+    if (nome.toLowerCase() === 'admin') {
+      // Se for admin, vai para o PAINEL DE ADMINISTRAÇÃO
+      console.log('Entrando como Administrador...');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Admin' }], // Rota definida no seu routes.jsx
+      });
+    } else {
+      // Se for outro nome, vai para o MAPA (Comportamento padrão)
+      console.log('Entrando como Usuário:', nome);
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'MapPage' }], // Rota definida no seu routes.jsx
+      });
+    }
   }
 
   return (
@@ -36,6 +49,7 @@ export function LoginForm() {
           placeholderTextColor="#ccc"
           value={nome}
           onChangeText={setNome}
+          autoCapitalize="none" // Importante: evita que o celular coloque letra maiúscula sozinho no "admin"
         />
         <Text style={styles.label}>Chave de acesso</Text>
         <TextInput

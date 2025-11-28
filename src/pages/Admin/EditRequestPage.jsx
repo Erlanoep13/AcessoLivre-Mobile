@@ -8,10 +8,11 @@ import {
   Alert 
 } from 'react-native';
 import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
+// Importei a Navbar aqui
+import { Navbar } from '../../components/Navbar';
 import { Footer } from '../../components/Footer';
 
 export function EditRequestsPage() {
-  // Dados fictícios simulando o que mudou
   const [requests, setRequests] = useState([
     { 
       id: 1, 
@@ -63,6 +64,10 @@ export function EditRequestsPage() {
 
   return (
     <View style={styles.container}>
+      
+      {/* 1. Navbar Fixa no Topo */}
+      <Navbar />
+
       <ScrollView contentContainerStyle={styles.scrollContent}>
         
         {/* Cabeçalho Laranja */}
@@ -147,7 +152,7 @@ export function EditRequestsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1e4e28', // Fundo Verde padrão
+    backgroundColor: '#1e4e28', 
   },
   scrollContent: {
     flexGrow: 1,
@@ -162,7 +167,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#ffe0b2', // Laranja bem claro
+    backgroundColor: '#ffe0b2', 
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 15,
@@ -236,17 +241,17 @@ const styles = StyleSheet.create({
   labelOld: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#d32f2f', // Vermelho para antigo
+    color: '#d32f2f', 
   },
   textOld: {
     fontSize: 14,
     color: '#555',
-    textDecorationLine: 'line-through', // Riscado para indicar que vai sair
+    textDecorationLine: 'line-through', 
   },
   labelNew: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#2e7d32', // Verde para novo
+    color: '#2e7d32', 
   },
   textNew: {
     fontSize: 14,
@@ -282,7 +287,7 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
   },
   btnApprove: {
-    backgroundColor: '#1e4e28', // Verde do app para confirmar
+    backgroundColor: '#1e4e28', 
   },
   btnTextReject: {
     color: '#666',
