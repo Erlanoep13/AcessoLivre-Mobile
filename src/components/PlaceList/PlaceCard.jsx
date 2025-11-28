@@ -9,25 +9,9 @@ export function PlaceCard({
   description,
   recursos,
   onEdit,
+  onDelete
 }) {
   const [isFavorite, setIsFavorite] = useState(false);
-
-  const handleDelete = () => {
-    Alert.alert(
-      "Remover Local",
-      "Tem certeza que deseja remover este local?",
-      [
-        {
-          text: "Cancelar",
-          style: "cancel"
-        },
-        {
-          text: "Sim, remover",
-          onPress: () => Alert.alert("Sucesso", "Pedido de remoção do local enviado para o administrador.")
-        }
-      ]
-    );
-  };
 
   return (
     <View style={styles.card}>
@@ -65,7 +49,7 @@ export function PlaceCard({
         </TouchableOpacity>
 
         {/* Botão Deletar */}
-        <TouchableOpacity onPress={handleDelete} style={styles.iconButton}>
+        <TouchableOpacity onPress={onDelete} style={styles.iconButton}>
           <Feather name="trash-2" size={20} color="#333" />
         </TouchableOpacity>
       </View>

@@ -1,9 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { PlaceCard } from './PlaceCard';
 import { PLACES_DATA } from '../../data/places';
+import { RemoveModal } from '../RemoveModal';
 
 export function PlaceList({ onEditPress }) {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+
+  const handleDeletePress = (id) => {
+    setSelectedId(id);
+    setModalVisible(true);
+  };
+
+  const confirmDelete = (motivo) => {
+    setModalVisible(false);
+    Alert.alert("Sucesso", "Pedido de remoção enviado para o administrador.");
+  };
+
   return (
     <View style={styles.container}>
       {PLACES_DATA.map((place) => (
@@ -16,9 +30,15 @@ export function PlaceList({ onEditPress }) {
           description={place.descricao}
           onEdit={() => onEditPress(place)}
           onFavorite={() => console.log('Favoritar', place.id)}
-          onDelete={() => console.log('Deletar', place.id)}
+          onDelete={() => handleDeletePress(place.id)}
         />
       ))}
+      
+      <RemoveModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onConfirm={confirmDelete}
+      />
     </View>
   );
 }

@@ -4,6 +4,7 @@ import MapView, { Marker } from 'react-native-maps';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { PLACES_DATA } from '../data/places';
+import { RemoveModal } from './RemoveModal';
 
 const INITIAL_REGION = {
     latitude: -5.12056,
@@ -41,6 +42,7 @@ export function Map() {
     const [tempMarker, setTempMarker] = useState(null);
     const [selectedMarker, setSelectedMarker] = useState(null);
     const [isCardFavorite, setIsCardFavorite] = useState(false);
+    const [isRemoveModalVisible, setRemoveModalVisible] = useState(false);
 
     const handleSelectMarker = (marker) => {
         setIsCardFavorite(false);
@@ -48,21 +50,14 @@ export function Map() {
     };
 
     // Função de Deletar
-    const handleDelete = () => {
-        Alert.alert(
-            "Remover Local",
-            "Tem certeza que deseja remover este local?",
-            [
-                { text: "Cancelar", style: "cancel" },
-                {
-                    text: "Sim, remover",
-                    onPress: () => {
-                        Alert.alert("Sucesso", "Pedido de remoção do local enviado para o administrador.");
-                        setSelectedMarker(null); // Fecha o card após "deletar"
-                    }
-                }
-            ]
-        );
+    const handleDeletePress = () => {
+        setRemoveModalVisible(true);
+    };
+
+    const confirmDelete = (motivo) => {
+        setRemoveModalVisible(false);
+        setSelectedMarker(null); // Fecha o card do local
+        Alert.alert("Sucesso", `Pedido de remoção enviado!\nMotivo: ${motivo}`);
     };
 
     const handleMapPress = (e) => {
@@ -177,7 +172,7 @@ export function Map() {
                             </TouchableOpacity>
 
                             {/* Botão Deletar */}
-                            <TouchableOpacity style={styles.actionBtn} onPress={handleDelete}>
+                            <TouchableOpacity style={styles.actionBtn} onPress={handleDeletePress}>
                                 <Feather name="trash-2" size={20} color="#333" />
                             </TouchableOpacity>
                         </View>
@@ -260,7 +255,11 @@ export function Map() {
                     </TouchableOpacity>
                 </View>
             </Modal>
-
+            <RemoveModal
+                visible={isRemoveModalVisible}
+                onClose={() => setRemoveModalVisible(false)}
+                onConfirm={confirmDelete}
+            />
         </View>
     );
 }
