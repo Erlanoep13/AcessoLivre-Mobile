@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
 import { PlaceCard } from './PlaceCard';
 import { PLACES_DATA } from '../../data/places';
 import { RemoveModal } from '../RemoveModal';
