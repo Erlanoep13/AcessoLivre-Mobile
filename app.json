@@ -8,10 +8,21 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "plugins": [
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth",
+      "@react-native-firebase/crashlytics",
       [
         "expo-image-picker",
         {
           "photosPermission": "O app precisa acessar suas fotos para anexar imagens aos locais."
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
         }
       ]
     ],
@@ -21,9 +32,13 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "bundleIdentifier": "com.ads.acessolivreios"
     },
     "android": {
+      "googleServicesFile": "./google-services.json",
+      "package": "com.ads.acessolivre",
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"

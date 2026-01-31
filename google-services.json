@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "201055887327",
+    "project_id": "acessolivre--mobile",
+    "storage_bucket": "acessolivre--mobile.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:201055887327:android:56bc8fc0f023c6262aee6a",
+        "android_client_info": {
+          "package_name": "com.ads.acessolivre"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFOYMqQVyRn8xJoHRj1G7DK5Rqt1PZL5s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
