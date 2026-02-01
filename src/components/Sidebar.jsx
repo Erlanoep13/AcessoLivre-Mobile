@@ -9,7 +9,9 @@ const screenWidth = Dimensions.get('window').width;
 export function Sidebar({ visible, onClose }) {
   const slideAnim = useRef(new Animated.Value(-screenWidth)).current;
   const navigation = useNavigation();
-  const { username, setUsername } = useUser(); 
+  
+  // 1. MUDANÇA: Pegamos o 'signOut' do contexto em vez do 'setUsername'
+  const { username, signOut } = useUser(); 
 
   const isAdmin = username && username.toLowerCase() === 'admin';
 
@@ -26,18 +28,17 @@ export function Sidebar({ visible, onClose }) {
     navigation.navigate(screen);
   };
 
-  // --- MUDANÇA AQUI ---
-  const handleLogout = () => {
-    setUsername(null); // 1. Desloga
-    onClose();         // 2. Fecha o menu
+  // 2. MUDANÇA: Função corrigida para apagar a memória do celular
+  const handleLogout = async () => {
+    await signOut(); // Limpa o AsyncStorage e o Contexto
+    onClose();       // Fecha o menu
     
-    // 3. Redireciona para o Mapa e limpa o histórico
+    // Redireciona para o Login (já que o usuário saiu)
     navigation.reset({
       index: 0,
-      routes: [{ name: 'MapPage' }],
+      routes: [{ name: 'Login' }],
     });
   };
-  // --------------------
 
   return (
     <Modal animationType="fade" transparent={true} visible={visible} onRequestClose={onClose}>

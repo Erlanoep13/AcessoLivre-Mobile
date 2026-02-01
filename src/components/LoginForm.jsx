@@ -4,6 +4,9 @@ import { useNavigation } from '@react-navigation/native';
 import { useUser } from '../contexts/UserContext';
 import { Ionicons } from '@expo/vector-icons';
 
+// 1. IMPORTAÇÃO DO ASYNC STORAGE ADICIONADA:
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 // Importações do Firebase
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
@@ -35,10 +38,9 @@ export function LoginForm() {
         return;
       }
 
-      // --- CORREÇÃO DO ERRO DA TELA VERMELHA 2 ---
       const userData = userDoc.data();
 
-      // Verificação de Segurança: Se o documento existir mas não tiver email
+      // Verificação de Segurança
       if (!userData || !userData.email) {
         setLoading(false);
         Alert.alert('Erro no Cadastro', 'Este usuário existe, mas não possui e-mail vinculado. Contate o suporte.');
@@ -51,8 +53,20 @@ export function LoginForm() {
       await auth().signInWithEmailAndPassword(emailRecuperado, chaveAcesso);
 
       // --- SUCESSO ---
-      console.log('Login realizado:', nome); // Apenas Log, sem erro
+      console.log('Login realizado:', nome);
+      
+      // Atualiza o contexto (memória temporária)
       setUsername(nome);
+
+      // 2. SALVAR NO ASYNC STORAGE (MEMÓRIA PERMANENTE) ADICIONADO:
+      // Salvamos um objeto JSON com o nome e se é admin, para usar no auto-login depois
+      const dadosUsuario = {
+        username: nome,
+        email: emailRecuperado,
+        isAdmin: emailRecuperado === 'admin@acessolivre.com'
+      };
+      
+      await AsyncStorage.setItem('@acessolivre:user', JSON.stringify(dadosUsuario));
 
       // Redirecionamento
       if (emailRecuperado === 'admin@acessolivre.com') {
@@ -68,8 +82,6 @@ export function LoginForm() {
       }
 
     } catch (error) {
-      // --- CORREÇÃO DO ERRO DA TELA VERMELHA 1 ---
-      // Usamos console.log em vez de console.error para não abrir a tela vermelha no celular
       console.log('Erro de login capturado:', error.code);
       setLoading(false);
 
@@ -100,13 +112,12 @@ export function LoginForm() {
           autoCapitalize="none"
         />
 
-        {/* NOVA ÁREA DA SENHA */}
+        {/* ÁREA DA SENHA */}
         <View style={styles.passwordContainer}>
           <TextInput
             style={styles.inputPassword}
             placeholder="Sua senha"
             placeholderTextColor="#ccc"
-            // Aqui está a mágica: se mostrarSenha for true, secureTextEntry vira false
             secureTextEntry={!mostrarSenha}
             value={chaveAcesso}
             onChangeText={setChaveAcesso}
@@ -151,7 +162,6 @@ const styles = StyleSheet.create({
   loginButtonText: { color: '#fff', fontSize: 16, fontWeight: '500' },
   createAccountContainer: { marginTop: 20 },
   createAccountText: { color: '#fff', textDecorationLine: 'underline', fontSize: 16, fontWeight: 'bold' },
-  // Container que segura o Input e o Ícone juntos
   passwordContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -161,7 +171,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     backgroundColor: '#fff',
   },
-  // O input agora ocupa o espaço restante, sem borda própria
   inputPassword: {
     flex: 1,
     paddingHorizontal: 10,
@@ -169,7 +178,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
   },
-  // Área de toque do ícone
   iconButton: {
     padding: 10,
   },
