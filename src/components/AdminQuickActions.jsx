@@ -1,22 +1,23 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // 1. Importar navegação
+import { useNavigation } from '@react-navigation/native';
+import { useTheme } from '../contexts/ThemeContext';
 
-export function AdminQuickActions({ 
-  addRequests = 0, 
-  editRequests = 0, 
-  removeRequests = 0
-}) {
-  
-  const navigation = useNavigation(); // 2. Inicializar navegação
+export function AdminQuickActions({ addRequests = 0, editRequests = 0, removeRequests = 0 }) {
+  const navigation = useNavigation();
+  const { theme } = useTheme();
 
   const ActionButton = ({ label, notificationCount, onPress }) => (
-    <TouchableOpacity style={styles.button} onPress={onPress} activeOpacity={0.7}>
-      <Text style={styles.buttonText}>{label}</Text>
-      
+    <TouchableOpacity
+      style={[styles.button, { backgroundColor: theme.colors.surfaceVariant, borderColor: theme.colors.outlineVariant }]}
+      onPress={onPress}
+      activeOpacity={0.7}
+    >
+      <Text style={[styles.buttonText, { color: theme.colors.onSurface }]}>{label}</Text>
+
       {notificationCount > 0 && (
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>
+        <View style={[styles.badge, { backgroundColor: theme.colors.error, borderColor: theme.colors.surface }]}>
+          <Text style={[styles.badgeText, { color: theme.colors.onError }]}>
             {notificationCount > 9 ? '9+' : notificationCount}
           </Text>
         </View>
@@ -26,73 +27,17 @@ export function AdminQuickActions({
 
   return (
     <View style={styles.container}>
-      {/* Botão 1: Adição -> Vai para 'AddRequest' */}
-      <ActionButton 
-        label="Pedidos de Adição" 
-        notificationCount={addRequests} 
-        onPress={() => navigation.navigate('AddRequest')} 
-      />
-      
-      {/* Botão 2: Edição -> Vai para 'EditRequest' */}
-      <ActionButton 
-        label="Pedidos de Edição" 
-        notificationCount={editRequests} 
-        onPress={() => navigation.navigate('EditRequest')} 
-      />
-      
-      {/* Botão 3: Remoção -> Vai para 'RemoveRequest' */}
-      <ActionButton 
-        label="Pedidos de Remoção" 
-        notificationCount={removeRequests} 
-        onPress={() => navigation.navigate('RemoveRequest')} 
-      />
+      <ActionButton label="Pedidos de Adição" notificationCount={addRequests} onPress={() => navigation.navigate('AddRequest')} />
+      <ActionButton label="Pedidos de Edição" notificationCount={editRequests} onPress={() => navigation.navigate('EditRequest')} />
+      <ActionButton label="Pedidos de Remoção" notificationCount={removeRequests} onPress={() => navigation.navigate('RemoveRequest')} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    paddingHorizontal: 4, 
-    marginBottom: 20,
-  },
-  button: {
-    backgroundColor: '#ffffffff', // Mantive a cor branca que você colocou
-    paddingVertical: 15,
-    borderRadius: 8,
-    marginBottom: 12, 
-    alignItems: 'center', 
-    justifyContent: 'center',
-    position: 'relative', 
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    shadowOffset: { width: 0, height: 1 },
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#1F2937', 
-  },
-  badge: {
-    position: 'absolute',
-    top: -8, 
-    right: -4, 
-    backgroundColor: '#EF4444', 
-    borderRadius: 12, 
-    minWidth: 24,
-    height: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#F3F4F6', 
-    paddingHorizontal: 4,
-    elevation: 3,
-  },
-  badgeText: {
-    color: '#FFF',
-    fontSize: 11,
-    fontWeight: 'bold',
-  }
+  container: { width: '100%', paddingHorizontal: 4, marginBottom: 20 },
+  button: { paddingVertical: 18, borderRadius: 12, marginBottom: 16, alignItems: 'center', justifyContent: 'center', position: 'relative', elevation: 2, borderWidth: 1 },
+  buttonText: { fontSize: 16, fontWeight: 'bold' },
+  badge: { position: 'absolute', top: -10, right: -5, borderRadius: 12, minWidth: 26, height: 26, justifyContent: 'center', alignItems: 'center', borderWidth: 2, paddingHorizontal: 4, elevation: 4 },
+  badgeText: { fontSize: 12, fontWeight: 'bold' }
 });

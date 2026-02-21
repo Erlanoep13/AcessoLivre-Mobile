@@ -2,12 +2,9 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useUser } from '../contexts/UserContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
-
-// 1. IMPORTAÇÃO DO ASYNC STORAGE ADICIONADA:
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-// Importações do Firebase
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 
@@ -16,11 +13,12 @@ export function LoginForm() {
   const [chaveAcesso, setChaveAcesso] = useState('');
   const [loading, setLoading] = useState(false);
   const [mostrarSenha, setMostrarSenha] = useState(false);
+
   const navigation = useNavigation();
   const { setUsername } = useUser();
+  const { theme, isDark } = useTheme();
 
   async function handleLogin() {
-    // 1. Validação de campos vazios
     if (nome.trim() === '' || chaveAcesso.trim() === '') {
       Alert.alert('Campos vazios', 'Por favor, preencha o nome de usuário e a senha.');
       return;
@@ -29,7 +27,7 @@ export function LoginForm() {
     setLoading(true);
 
     try {
-      // --- PASSO A: VERIFICAR SE O USUÁRIO EXISTE ---
+      // PASSO 1: Busca o e-mail associado ao username no Firestore
       const userDoc = await firestore().collection('usernames').doc(nome.trim()).get();
 
       if (!userDoc.exists) {
@@ -39,85 +37,67 @@ export function LoginForm() {
       }
 
       const userData = userDoc.data();
-
-      // Verificação de Segurança
       if (!userData || !userData.email) {
         setLoading(false);
-        Alert.alert('Erro no Cadastro', 'Este usuário existe, mas não possui e-mail vinculado. Contate o suporte.');
+        Alert.alert('Erro no Cadastro', 'Este usuário não possui e-mail vinculado.');
         return;
       }
 
       const emailRecuperado = userData.email;
 
-      // --- PASSO B: VERIFICAR A SENHA ---
+      // PASSO 2: Autenticação oficial via Firebase Auth
       await auth().signInWithEmailAndPassword(emailRecuperado, chaveAcesso);
 
-      // --- SUCESSO ---
-      console.log('Login realizado:', nome);
-      
-      // Atualiza o contexto (memória temporária)
+      // PASSO 3: Persistência Local (AsyncStorage)
       setUsername(nome);
-
-      // 2. SALVAR NO ASYNC STORAGE (MEMÓRIA PERMANENTE) ADICIONADO:
-      // Salvamos um objeto JSON com o nome e se é admin, para usar no auto-login depois
       const dadosUsuario = {
         username: nome,
-        email: emailRecuperado,
         isAdmin: emailRecuperado === 'admin@acessolivre.com'
       };
-      
       await AsyncStorage.setItem('@acessolivre:user', JSON.stringify(dadosUsuario));
 
-      // Redirecionamento
-      if (emailRecuperado === 'admin@acessolivre.com') {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Admin' }],
-        });
-      } else {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'MapPage' }],
-        });
-      }
+      navigation.reset({
+        index: 0,
+        routes: [{ name: emailRecuperado === 'admin@acessolivre.com' ? 'Admin' : 'MapPage' }],
+      });
 
     } catch (error) {
-      console.log('Erro de login capturado:', error.code);
       setLoading(false);
-
-      if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-        Alert.alert('Erro de Acesso', 'Senha errada.');
-      }
-      else if (error.code === 'auth/too-many-requests') {
-        Alert.alert('Bloqueado', 'Muitas tentativas. Aguarde um momento.');
-      }
-      else {
-        Alert.alert('Erro', 'Usuário não cadastrado. Verifique o nome de usuário e tente novamente.');
-      }
+      Alert.alert('Erro', 'Verifique suas credenciais e tente novamente.');
     }
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.pageTitle}>Faça Login e aproveite melhor nosso sistema!</Text>
+      <Text style={[styles.pageTitle, { color: theme.colors.onSurface }]}>
+        Faça Login e aproveite melhor nosso sistema!
+      </Text>
 
-      <View style={styles.card}>
-        <Text style={styles.label}>Nome de Usuário</Text>
+      <View style={[styles.card, { backgroundColor: theme.colors.surfaceContainerLow }]}>
+
+        <Text style={[styles.label, { color: theme.colors.onSurface }]}>Nome de Usuário</Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, {
+            backgroundColor: theme.colors.surfaceVariant,
+            color: theme.colors.onSurface,
+            borderColor: theme.colors.outlineVariant
+          }]}
           placeholder="Ex: Erlano"
-          placeholderTextColor="#ccc"
+          placeholderTextColor={theme.colors.onSurfaceVariant}
           value={nome}
           onChangeText={setNome}
           autoCapitalize="none"
         />
 
-        {/* ÁREA DA SENHA */}
-        <View style={styles.passwordContainer}>
+        <Text style={[styles.label, { color: theme.colors.onSurface }]}>Sua Senha</Text>
+        <View style={[styles.passwordContainer, {
+          backgroundColor: theme.colors.surfaceVariant,
+          borderColor: theme.colors.outlineVariant
+        }]}>
           <TextInput
-            style={styles.inputPassword}
+            style={[styles.inputPassword, { color: theme.colors.onSurface }]}
             placeholder="Sua senha"
-            placeholderTextColor="#ccc"
+            placeholderTextColor={theme.colors.onSurfaceVariant}
             secureTextEntry={!mostrarSenha}
             value={chaveAcesso}
             onChangeText={setChaveAcesso}
@@ -126,59 +106,108 @@ export function LoginForm() {
           <TouchableOpacity onPress={() => setMostrarSenha(!mostrarSenha)} style={styles.iconButton}>
             <Ionicons
               name={mostrarSenha ? "eye" : "eye-off"}
-              size={24}
-              color="#666"
+              size={22}
+              color={theme.colors.onSurfaceVariant}
             />
           </TouchableOpacity>
         </View>
 
         <TouchableOpacity
-          style={[styles.loginButton, loading && { opacity: 0.7 }]}
+          style={[styles.loginButton, { backgroundColor: theme.colors.primary }, loading && { opacity: 0.7 }]}
           onPress={handleLogin}
           disabled={loading}
         >
           {loading ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color={theme.colors.onPrimary} />
           ) : (
-            <Text style={styles.loginButtonText}>Entrar</Text>
+            <Text style={[styles.loginButtonText, { color: theme.colors.onPrimary }]}>Entrar</Text>
           )}
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.createAccountContainer} onPress={() => navigation.navigate('Register')}>
-        <Text style={styles.createAccountText}>Criar conta</Text>
+      <TouchableOpacity
+        style={styles.createAccountContainer}
+        onPress={() => navigation.navigate('Register')}
+      >
+        <Text>Não tem uma conta? </Text>
+        <Text style={[styles.createAccountText, { color: theme.colors.primary }]}>
+          Criar conta
+        </Text>
       </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { width: '100%', alignItems: 'center', marginBottom: 20 },
-  pageTitle: { fontSize: 20, fontWeight: 'bold', color: '#fff', textAlign: 'center', maxWidth: '80%', marginBottom: 30 },
-  card: { backgroundColor: '#fff', width: '85%', borderRadius: 10, paddingVertical: 30, paddingHorizontal: 20, elevation: 5 },
-  label: { fontSize: 16, color: '#000', marginBottom: 8, fontWeight: '500' },
-  input: { borderWidth: 1, borderColor: '#e0e0e0', borderRadius: 5, paddingHorizontal: 10, paddingVertical: 8, fontSize: 16, marginBottom: 20, color: '#333' },
-  loginButton: { backgroundColor: '#1e293b', borderRadius: 5, paddingVertical: 12, alignItems: 'center', marginTop: 10 },
-  loginButtonText: { color: '#fff', fontSize: 16, fontWeight: '500' },
-  createAccountContainer: { marginTop: 20 },
-  createAccountText: { color: '#fff', textDecorationLine: 'underline', fontSize: 16, fontWeight: 'bold' },
+  container: {
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: 20
+  },
+  pageTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    maxWidth: '80%',
+    marginBottom: 30
+  },
+  card: {
+    width: '85%',
+    borderRadius: 20,
+    paddingVertical: 35,
+    paddingHorizontal: 20,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+  },
+  label: {
+    fontSize: 14,
+    marginBottom: 8,
+    fontWeight: 'bold'
+  },
+  input: {
+    borderRadius: 12,
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    fontSize: 16,
+    marginBottom: 20,
+    borderWidth: 1,
+  },
   passwordContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    borderRadius: 12,
+    marginBottom: 30,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
-    borderRadius: 5,
-    marginBottom: 20,
-    backgroundColor: '#fff',
   },
   inputPassword: {
     flex: 1,
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,
     paddingVertical: 12,
-    fontSize: 16,
-    color: '#333',
+    fontSize: 16
   },
   iconButton: {
-    padding: 10,
+    padding: 10
+  },
+  loginButton: {
+    borderRadius: 100, // Botão pílula M3
+    paddingVertical: 14,
+    alignItems: 'center',
+    marginTop: 10,
+    elevation: 2
+  },
+  loginButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold'
+  },
+  createAccountContainer: {
+    marginTop: 25
+  },
+  createAccountText: {
+    textDecorationLine: 'underline',
+    fontSize: 15,
+    fontWeight: 'bold'
   },
 });

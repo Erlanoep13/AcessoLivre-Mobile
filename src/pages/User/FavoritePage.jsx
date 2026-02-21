@@ -1,35 +1,41 @@
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, StatusBar } from 'react-native';
+import { useTheme } from '../../contexts/ThemeContext';
 import { Navbar } from '../../components/Navbar';
 import { Footer } from '../../components/Footer';
 import { FavoriteCard } from '../../components/FavoriteCard';
 
-
 export function FavoritePage() {
+  const { theme, isDark } = useTheme();
+
   return (
-    <View style={styles.container}>
-      
-      {/* Navbar Fixa no topo */}
+    <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
+      {/* StatusBar sincronizada com a Navbar (surfaceContainerHighest) */}
+      <StatusBar
+        backgroundColor={theme.colors.surfaceContainerHighest}
+        barStyle={isDark ? "light-content" : "dark-content"}
+      />
+
       <Navbar />
 
-      <ScrollView style={styles.scrollContainer}>
-        
+      <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+
         <View style={styles.content}>
           {/* Título da Página */}
-          <Text style={styles.pageTitle}>Meus Favoritos</Text>
-          <Text style={styles.pageSubtitle}>Seus locais salvos aparecem aqui.
+          <Text style={[styles.pageTitle, { color: theme.colors.onSurface }]}>
+            Meus Favoritos
+          </Text>
+          <Text style={[styles.pageSubtitle, { color: theme.colors.onSurfaceVariant }]}>
+            Seus locais salvos aparecem aqui para acesso rápido.
           </Text>
 
-        <FavoriteCard />
-          
-
+          {/* Lista de Cards de Favoritos */}
+          <FavoriteCard />
         </View>
 
-        {/* Footer no final */}
         <Footer />
 
       </ScrollView>
-      
     </View>
   );
 }
@@ -37,33 +43,22 @@ export function FavoritePage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1e4e28',
   },
   scrollContainer: {
     flex: 1,
-    
   },
   content: {
     padding: 16,
-    minHeight: 400, // Garante uma altura mínima pro footer não subir demais se estiver vazio
-    textAlign: 'center'
+    minHeight: 450,
   },
   pageTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#ffffffff', 
     marginTop: 10,
     marginBottom: 4,
   },
   pageSubtitle: {
     fontSize: 16,
-    color: '#ffffffff',
     marginBottom: 24,
-  },
-
-  placeholderText: {
-    color: '#9CA3AF',
-    fontStyle: 'italic',
-    textAlign: 'center',
   }
 });

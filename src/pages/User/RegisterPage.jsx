@@ -1,107 +1,127 @@
 import React, { useState } from 'react';
-import { 
-    View, 
-    Text, 
-    TextInput, 
-    TouchableOpacity, 
-    StyleSheet, 
-    ScrollView, 
+import {
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    StyleSheet,
+    ScrollView,
     StatusBar,
-    Alert 
+    Alert
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { useTheme } from '../../contexts/ThemeContext'; // Importação do contexto de tema
 
 import { Navbar } from '../../components/Navbar';
 import { Footer } from '../../components/Footer';
 
 export function RegisterPage() {
     const navigation = useNavigation();
+    const { theme, isDark } = useTheme(); // Acessando os tokens de cor do M3
     const [name, setName] = useState('');
     const [accessKey, setAccessKey] = useState('');
 
     const handleGenerateKey = () => {
-        // Validação simples
         if (name.trim() === '') {
             Alert.alert("Campo obrigatório", "Por favor, digite seu nome.");
             return;
         }
-
-        // Por enquanto, definimos a chave fixar como "1".
-        // Futuramente, isso virá da resposta do seu backend/banco de dados.
+        // Mock da chave de acesso provisória conforme lógica anterior
         setAccessKey("1");
     };
 
     const handleCopyAndLogin = () => {
-        // Futuramente: Copiar para área de transferência
         navigation.navigate('Login');
     };
 
     return (
-        <View style={styles.container}>
-            {/* StatusBar combinando com o fundo */}
-            <StatusBar backgroundColor="#1e4e28" barStyle="light-content" />
-            
+        <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
+            {/* StatusBar sincronizada com a Navbar (surfaceContainerHighest) */}
+            <StatusBar
+                backgroundColor={theme.colors.surfaceContainerHighest}
+                barStyle={isDark ? "light-content" : "dark-content"}
+            />
+
             <Navbar />
 
-            <ScrollView contentContainerStyle={styles.scrollContent}>
-                
+            <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+
                 <View style={styles.formArea}>
-                    
-                    {/* Título da Página (Estilo Login) */}
-                    <Text style={styles.pageTitle}>
+
+                    <Text style={[styles.pageTitle, { color: theme.colors.onSurface }]}>
                         Crie sua conta!
                     </Text>
 
-                    <View style={styles.card}>
-                        
+                    {/* Card: surfaceContainerLow (#F1F5EC) para se destacar da surface (#F7FBF2) */}
+                    <View style={[styles.card, { backgroundColor: theme.colors.surfaceContainerLow }]}>
+
                         {!accessKey ? (
                             // --- ESTADO 1: FORMULÁRIO ---
                             <>
-                                <Text style={styles.label}>Nome</Text>
-                                <TextInput 
-                                    style={styles.input}
+                                <Text style={[styles.label, { color: theme.colors.onSurface }]}>Nome</Text>
+                                <TextInput
+                                    style={[styles.input, {
+                                        backgroundColor: theme.colors.surfaceVariant,
+                                        color: theme.colors.onSurface,
+                                        borderColor: theme.colors.outlineVariant
+                                    }]}
                                     placeholder="Seu nome"
-                                    placeholderTextColor="#ccc"
+                                    placeholderTextColor={theme.colors.onSurfaceVariant}
                                     value={name}
                                     onChangeText={setName}
                                 />
 
-                                <Text style={styles.helperText}>
+                                <Text style={[styles.helperText, { color: theme.colors.onSurfaceVariant }]}>
                                     Ao clicar em gerar, você receberá sua chave de acesso provisória.
                                 </Text>
 
-                                {/* Botão estilo Login (Azul Marinho) */}
-                                <TouchableOpacity style={styles.navyButton} onPress={handleGenerateKey}>
-                                    <Text style={styles.buttonText}>Gerar Chave</Text>
+                                <TouchableOpacity
+                                    style={[styles.primaryButton, { backgroundColor: theme.colors.primary }]}
+                                    onPress={handleGenerateKey}
+                                >
+                                    <Text style={[styles.buttonText, { color: theme.colors.onPrimary }]}>
+                                        Gerar Chave
+                                    </Text>
                                 </TouchableOpacity>
 
-                                <TouchableOpacity 
-                                    style={styles.linkButton} 
+                                <TouchableOpacity
+                                    style={styles.linkButton}
                                     onPress={() => navigation.navigate('Login')}
                                 >
-                                    <Text style={styles.linkText}>
-                                        Já tem uma conta? <Text style={styles.linkBold}>Faça Login</Text>
+                                    <Text style={[styles.linkText, { color: theme.colors.onSurfaceVariant }]}>
+                                        Já tem uma conta? <Text style={{ color: theme.colors.primary, fontWeight: 'bold' }}>Faça Login</Text>
                                     </Text>
                                 </TouchableOpacity>
                             </>
                         ) : (
-                            // --- ESTADO 2: SUCESSO (MOSTRA A CHAVE "1") ---
+                            // --- ESTADO 2: SUCESSO (CHAVE GERADA) ---
                             <View style={styles.successContainer}>
-                                <MaterialIcons name="check-circle" size={48} color="#1e4e28" />
-                                <Text style={styles.successTitle}>Tudo pronto, {name}!</Text>
-                                <Text style={styles.instructionText}>
+                                <MaterialIcons name="check-circle" size={56} color={theme.colors.primary} />
+                                <Text style={[styles.successTitle, { color: theme.colors.onSurface }]}>
+                                    Tudo pronto, {name}!
+                                </Text>
+                                <Text style={[styles.instructionText, { color: theme.colors.onSurfaceVariant }]}>
                                     Esta é sua chave de acesso. Você precisará dela para entrar.
                                 </Text>
 
-                                {/* Mostra a chave fixa "1" */}
-                                <View style={styles.keyDisplay}>
-                                    <Text style={styles.keyText}>{accessKey}</Text>
+                                {/* Destaque da Chave: PrimaryContainer conforme M3 */}
+                                <View style={[
+                                    styles.keyDisplay,
+                                    { backgroundColor: theme.colors.primaryContainer, borderColor: theme.colors.primary }
+                                ]}>
+                                    <Text style={[styles.keyText, { color: theme.colors.onPrimaryContainer }]}>
+                                        {accessKey}
+                                    </Text>
                                 </View>
 
-                                {/* Botão estilo Login (Azul Marinho) */}
-                                <TouchableOpacity style={styles.navyButton} onPress={handleCopyAndLogin}>
-                                    <Text style={styles.buttonText}>Ir para Login</Text>
+                                <TouchableOpacity
+                                    style={[styles.primaryButton, { backgroundColor: theme.colors.primary }]}
+                                    onPress={handleCopyAndLogin}
+                                >
+                                    <Text style={[styles.buttonText, { color: theme.colors.onPrimary }]}>
+                                        Ir para Login
+                                    </Text>
                                 </TouchableOpacity>
                             </View>
                         )}
@@ -117,124 +137,72 @@ export function RegisterPage() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#1e4e28', // Fundo Verde Escuro
-    },
-    scrollContent: {
-        flexGrow: 1,
-        justifyContent: 'space-between',
-    },
+    container: { flex: 1 },
+    scrollContent: { flexGrow: 1, justifyContent: 'space-between' },
     formArea: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center', // Centraliza o card horizontalmente
+        alignItems: 'center',
         paddingVertical: 40,
-        paddingHorizontal: 20,
+        paddingHorizontal: 20
     },
-    // Título branco fora do card (igual ao print do login)
     pageTitle: {
-        fontSize: 20,
+        fontSize: 22,
         fontWeight: 'bold',
-        color: '#fff',
         textAlign: 'center',
         maxWidth: '80%',
-        marginBottom: 25,
+        marginBottom: 25
     },
     card: {
-        backgroundColor: '#fff',
-        width: '100%', // Ocupa a largura disponível do formArea
-        borderRadius: 10,
-        padding: 25,
-        elevation: 5,
+        width: '100%',
+        borderRadius: 24, // Bordas mais suaves para containers M3
+        padding: 24,
+        elevation: 2, // Elevação sutil em vez de bordas
         shadowColor: '#000',
+        shadowOpacity: 0.05,
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
+        shadowRadius: 4,
     },
     label: {
-        fontSize: 16,
-        color: '#000',
+        fontSize: 14,
         marginBottom: 8,
-        fontWeight: '500',
+        fontWeight: 'bold'
     },
     input: {
-        borderWidth: 1,
-        borderColor: '#e0e0e0',
-        borderRadius: 5,
-        paddingHorizontal: 10,
+        borderRadius: 12,
+        paddingHorizontal: 15,
         paddingVertical: 12,
         fontSize: 16,
         marginBottom: 15,
-        color: '#333',
+        borderWidth: 1,
     },
     helperText: {
         fontSize: 14,
-        color: '#666',
-        marginBottom: 20,
+        marginBottom: 25,
         fontStyle: 'italic',
+        lineHeight: 20
     },
-    
-    // --- BOTÃO ESTILO LOGIN (Azul Marinho) ---
-    navyButton: {
-        backgroundColor: '#166534', // Cor do botão da sua imagem de login
-        borderRadius: 5,
-        paddingVertical: 12,
+    primaryButton: {
+        borderRadius: 100, // Formato pílula M3
+        paddingVertical: 14,
         alignItems: 'center',
         marginTop: 10,
         width: '100%',
+        elevation: 2
     },
-    buttonText: {
-        color: '#fff',
-        fontWeight: '500',
-        fontSize: 16,
-    },
-    
-    // --- LINKS ---
-    linkButton: {
-        marginTop: 20,
-        alignItems: 'center',
-    },
-    linkText: {
-        color: '#666',
-        fontSize: 14,
-    },
-    linkBold: {
-        color: '#1e4e28',
-        fontWeight: 'bold',
-    },
-
-    // --- ÁREA DE SUCESSO ---
-    successContainer: {
-        alignItems: 'center',
-        paddingVertical: 10,
-    },
-    successTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#333',
-        marginTop: 10,
-        marginBottom: 5,
-    },
-    instructionText: {
-        fontSize: 14,
-        color: '#666',
-        textAlign: 'center',
-        marginBottom: 20,
-    },
+    buttonText: { fontWeight: 'bold', fontSize: 16 },
+    linkButton: { marginTop: 25, alignItems: 'center' },
+    linkText: { fontSize: 14 },
+    successContainer: { alignItems: 'center', paddingVertical: 10 },
+    successTitle: { fontSize: 20, fontWeight: 'bold', marginTop: 15, marginBottom: 8 },
+    instructionText: { fontSize: 14, textAlign: 'center', marginBottom: 25, lineHeight: 20 },
     keyDisplay: {
-        backgroundColor: '#e8f5e9',
         paddingVertical: 15,
         paddingHorizontal: 40,
-        borderRadius: 10,
+        borderRadius: 16,
         borderWidth: 2,
-        borderColor: '#1e4e28',
         borderStyle: 'dashed',
-        marginBottom: 25,
+        marginBottom: 30
     },
-    keyText: {
-        fontSize: 36,
-        fontWeight: 'bold',
-        color: '#1e4e28',
-    }
+    keyText: { fontSize: 42, fontWeight: 'bold' }
 });

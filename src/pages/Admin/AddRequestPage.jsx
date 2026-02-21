@@ -1,168 +1,83 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, StatusBar, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, FlatList, StatusBar, Alert } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { useTheme } from '../../contexts/ThemeContext';
 import { Navbar } from '../../components/Navbar';
 import { RequestCard } from '../../components/RequestCard';
 import { Footer } from '../../components/Footer';
 
-// Dados Falsos (Mock)
 const INITIAL_REQUESTS = [
-  {
-    id: '1',
-    usuario: 'Marcos Barros', // Era userName
-    nome: 'Praça Matriz de Madalena-Ce', // Era placeName
-    localizacao: 'Madalena - Centro', // Era address
-    tipo: 'Visual', // Era accessibilityType
-    recursos: 'Piso Tátil, Placas em Braille', // Novo
-    descricao: 'Praça da matriz possui piso Tátil' // Era description
-  },
-  {
-    id: '2',
-    usuario: 'Rafael Nogueira',
-    nome: 'Biblioteca Municipal',
-    localizacao: 'Boa Viagem - Centro',
-    tipo: 'Motora',
-    recursos: 'Rampa de acesso',
-    descricao: 'Rampa de acesso na entrada principal'
-  }
+  { id: '1', usuario: 'Marcos Barros', nome: 'Praça Matriz de Madalena-Ce', localizacao: 'Madalena - Centro', tipo: 'Visual', recursos: 'Piso Tátil, Placas em Braille', descricao: 'Praça da matriz possui piso Tátil' },
+  { id: '2', usuario: 'Rafael Nogueira', nome: 'Biblioteca Municipal', localizacao: 'Boa Viagem - Centro', tipo: 'Motora', recursos: 'Rampa de acesso', descricao: 'Rampa de acesso na entrada principal' }
 ];
 
 export function AddRequestPage() {
   const [requests, setRequests] = useState(INITIAL_REQUESTS);
+  const { theme, isDark } = useTheme();
 
   const handleApprove = (id) => {
-    Alert.alert(
-      "Confirmar Aprovação",
-      "Tem certeza que deseja adicionar este local ao mapa?",
-      [
-        { text: "Cancelar", style: "cancel" },
-        {
-          text: "Confirmar",
-          onPress: () => {
-            setRequests(current => current.filter(item => item.id !== id));
-          }
-        }
-      ]
-    );
+    Alert.alert("Confirmar Aprovação", "Adicionar este local ao mapa?", [
+      { text: "Cancelar", style: "cancel" },
+      { text: "Confirmar", onPress: () => setRequests(curr => curr.filter(i => i.id !== id)) }
+    ]);
   };
 
   const handleReject = (id) => {
-    Alert.alert(
-      "Rejeitar Pedido",
-      "Tem certeza que deseja descartar esta sugestão?",
-      [
-        { text: "Cancelar", style: "cancel" },
-        {
-          text: "Rejeitar",
-          style: "destructive", // No iOS fica vermelho
-          onPress: () => {
-            setRequests(current => current.filter(item => item.id !== id));
-          }
-        }
-      ]
-    );
+    Alert.alert("Rejeitar Pedido", "Descartar esta sugestão?", [
+      { text: "Cancelar", style: "cancel" },
+      { text: "Rejeitar", style: "destructive", onPress: () => setRequests(curr => curr.filter(i => i.id !== id)) }
+    ]);
   };
 
   const renderHeader = () => (
     <View style={styles.header}>
-      <View style={styles.iconCircle}>
-        <FontAwesome5 name="plus" size={30} color="#459102ff" />
+      <View style={[styles.iconCircle, { backgroundColor: theme.colors.primaryContainer }]}>
+        <FontAwesome5 name="plus" size={24} color={theme.colors.onPrimaryContainer} />
       </View>
-      <Text style={styles.title}>Pedidos de Adição</Text>
-      <Text style={styles.subtitle}>
+      <Text style={[styles.title, { color: theme.colors.onSurface }]}>Pedidos de Adição</Text>
+      <Text style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}>
         Novos locais sugeridos pela comunidade
       </Text>
     </View>
   );
 
-  // Função que desenha cada item da lista
-  const renderItem = ({ item }) => (
-    <View style={styles.card}>
-      <RequestCard
-        usuario={item.usuario}
-        nome={item.nome}
-        localizacao={item.localizacao}
-        tipo={item.tipo}
-        recursos={item.recursos}
-        descricao={item.descricao}
-
-        onAccept={() => handleApprove(item.id)}
-        onRefuse={() => handleReject(item.id)}
-      />
-    </View>
-  );
-
   return (
-    <View style={styles.container}>
-      <StatusBar backgroundColor="#166534" barStyle="light-content" />
-
+    <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
+      <StatusBar backgroundColor={theme.colors.primary} barStyle="light-content" />
       <Navbar />
-
       <FlatList
         data={requests}
         keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-
+        renderItem={({ item }) => (
+          <View style={styles.cardPadding}>
+            <RequestCard
+              usuario={item.usuario}
+              nome={item.nome}
+              localizacao={item.localizacao}
+              tipo={item.tipo}
+              recursos={item.recursos}
+              descricao={item.descricao}
+              onAccept={() => handleApprove(item.id)}
+              onRefuse={() => handleReject(item.id)}
+            />
+          </View>
+        )}
         ListHeaderComponent={renderHeader}
-
         ListFooterComponent={<Footer />}
-
-        // Estilos e Configurações
         contentContainerStyle={styles.listContent}
-        ListEmptyComponent={
-          <Text style={styles.emptyText}>Nenhum pedido pendente.</Text>
-        }
+        ListEmptyComponent={<Text style={[styles.emptyText, { color: theme.colors.onSurfaceVariant }]}>Nenhum pedido pendente.</Text>}
       />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#1e4e28',
-  },
-  header: {
-    alignItems: 'center',
-    paddingVertical: 30,
-    paddingHorizontal: 20,
-  },
-  iconCircle: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#b1f295ff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 15,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#a5d6a7',
-    marginTop: 5,
-    textAlign: 'center',
-  },
-  pageTitle: {
-    fontSize: 20,
-    color: '#fff',
-    textAlign: 'center',
-    marginVertical: 20,
-    fontWeight: '500',
-  },
-  card: {
-    paddingHorizontal: 16,
-    paddingBottom: 20,
-  },
-  emptyText: {
-    color: '#fff',
-    textAlign: 'center',
-    marginTop: 20,
-    fontSize: 20,
-    marginBottom: 40,
-  }
+  container: { flex: 1 },
+  header: { alignItems: 'center', paddingVertical: 30, paddingHorizontal: 20 },
+  iconCircle: { width: 60, height: 60, borderRadius: 30, justifyContent: 'center', alignItems: 'center', marginBottom: 15 },
+  title: { fontSize: 24, fontWeight: 'bold' },
+  subtitle: { fontSize: 14, marginTop: 5, textAlign: 'center' },
+  cardPadding: { paddingHorizontal: 16, paddingBottom: 10 },
+  listContent: { paddingBottom: 20 },
+  emptyText: { textAlign: 'center', marginTop: 40, fontSize: 18 }
 });

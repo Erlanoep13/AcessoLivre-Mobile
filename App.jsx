@@ -2,23 +2,35 @@ import React from 'react';
 import { StatusBar } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
-import { Routes } from './src/routes'; 
+import { Routes } from './src/routes';
 import { UserProvider } from './src/contexts/UserContext';
+import { ThemeProvider, useTheme } from './src/contexts/ThemeContext';
+
+function AppContent() {
+  const { theme, isDark } = useTheme();
+
+  return (
+    <>
+      <StatusBar
+        barStyle={isDark ? "light-content" : "dark-content"}
+        backgroundColor={theme.colors.primary}
+        translucent={true}
+      />
+      <Routes />
+    </>
+  );
+}
 
 export default function App() {
   return (
     <SafeAreaProvider>
-      <NavigationContainer>
-          <UserProvider>
-            <StatusBar 
-              translucent={true} 
-              barStyle="dark-content" 
-              backgroundColor="transparent" />
-            <StatusBar backgroundColor="#1e4e28" barStyle="light-content" />
-            <Routes />
-          </UserProvider>
-      </NavigationContainer>
-      
+      <ThemeProvider>
+        <UserProvider>
+          <NavigationContainer>
+            <AppContent />
+          </NavigationContainer>
+        </UserProvider>
+      </ThemeProvider>
     </SafeAreaProvider>
   );
 }

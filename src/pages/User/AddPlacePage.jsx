@@ -1,48 +1,29 @@
 import React from 'react';
-import {
-    View,
-    ScrollView,
-    StyleSheet,
-    StatusBar,
-    KeyboardAvoidingView,
-    Platform
-} from 'react-native';
+import { View, ScrollView, StyleSheet, StatusBar } from 'react-native';
+import { useTheme } from '../../contexts/ThemeContext'; // Importação do contexto
 import { Navbar } from '../../components/Navbar';
 import { Footer } from '../../components/Footer';
 import { AddPlaceForm } from '../../components/AddPlaceForm';
 
-export function AddPlacePage({ route }) {
-
-    const { coordinate, placeData } = route.params || {};
+export function AddPlacePage() {
+    const { theme, isDark } = useTheme(); // Acessando os tokens do M3
 
     return (
-        <View style={styles.container}>
-            <StatusBar backgroundColor="#1e4e28" barStyle="light-content" />
+        <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
+            <StatusBar
+                backgroundColor={theme.colors.surfaceContainerHighest}
+                barStyle={isDark ? "light-content" : "dark-content"}
+            />
 
             <Navbar />
 
-            <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                style={{ flex: 1 }}
-            >
+            <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+                <View style={styles.content}>
+                    <AddPlaceForm />
+                </View>
 
-                <ScrollView
-                    contentContainerStyle={styles.scrollContent}
-                    keyboardShouldPersistTaps="handled"
-                >
-
-                    <View style={styles.formArea}>
-                        {/* Passamos a coordenada e os dados do local para o formulário */}
-                        <AddPlaceForm
-                            initialCoordinate={coordinate}
-                            initialData={placeData}
-                        />
-                    </View>
-
-                    <Footer />
-
-                </ScrollView>
-            </KeyboardAvoidingView>
+                <Footer />
+            </ScrollView>
         </View>
     );
 }
@@ -50,14 +31,11 @@ export function AddPlacePage({ route }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#1e4e28',
     },
     scrollContent: {
         flexGrow: 1,
-        justifyContent: 'space-between',
     },
-    formArea: {
-        padding: 16,
-        width: '100%',
-    },
+    content: {
+        paddingVertical: 10,
+    }
 });

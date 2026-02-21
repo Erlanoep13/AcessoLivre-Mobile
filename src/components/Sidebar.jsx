@@ -1,26 +1,37 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Modal, TouchableOpacity, Animated, Dimensions, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Modal,
+  TouchableOpacity,
+  Animated,
+  Dimensions,
+  ScrollView,
+  Switch
+} from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { useUser } from '../contexts/UserContext'; 
+import { useUser } from '../contexts/UserContext';
+import { useTheme } from '../contexts/ThemeContext'; // Importação do contexto de tema
 
 const screenWidth = Dimensions.get('window').width;
 
 export function Sidebar({ visible, onClose }) {
   const slideAnim = useRef(new Animated.Value(-screenWidth)).current;
   const navigation = useNavigation();
-  
-  // 1. MUDANÇA: Pegamos o 'signOut' do contexto em vez do 'setUsername'
-  const { username, signOut } = useUser(); 
+  const { username, signOut } = useUser();
+  const { theme, isDark, toggleTheme } = useTheme();
 
+  // Verifica se o usuário logado tem privilégios de administrador
   const isAdmin = username && username.toLowerCase() === 'admin';
 
   useEffect(() => {
-    if (visible) {
-      Animated.timing(slideAnim, { toValue: 0, duration: 300, useNativeDriver: true }).start();
-    } else {
-      slideAnim.setValue(-screenWidth);
-    }
+    Animated.timing(slideAnim, {
+      toValue: visible ? 0 : -screenWidth,
+      duration: 300,
+      useNativeDriver: true
+    }).start();
   }, [visible]);
 
   const navigateTo = (screen) => {
@@ -28,94 +39,107 @@ export function Sidebar({ visible, onClose }) {
     navigation.navigate(screen);
   };
 
-  // 2. MUDANÇA: Função corrigida para apagar a memória do celular
   const handleLogout = async () => {
-    await signOut(); // Limpa o AsyncStorage e o Contexto
-    onClose();       // Fecha o menu
-    
-    // Redireciona para o Login (já que o usuário saiu)
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Login' }],
-    });
+    await signOut();
+    onClose();
+    navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
   };
 
   return (
-    <Modal animationType="fade" transparent={true} visible={visible} onRequestClose={onClose}>
+    <Modal transparent visible={visible} onRequestClose={onClose} animationType="fade">
       <View style={styles.overlay}>
-        <Animated.View style={[styles.menuContainer, { transform: [{ translateX: slideAnim }] }]}>
-          
+        <Animated.View style={[
+          styles.menuContainer,
+          { transform: [{ translateX: slideAnim }], backgroundColor: theme.colors.surface }
+        ]}>
+
+          {/* Cabeçalho do Menu */}
           <View style={styles.header}>
-            <Text style={styles.title}>AcessoLivre</Text>
+            <Text style={[styles.title, { color: theme.colors.primary }]}>AcessoLivre</Text>
             <TouchableOpacity onPress={onClose}>
-              <Feather name="x" size={24} color="#666" />
+              <Feather name="x" size={24} color={theme.colors.onSurface} />
             </TouchableOpacity>
           </View>
 
           <ScrollView showsVerticalScrollIndicator={false}>
-            
-            <View style={styles.divider} />
 
+            {/* Seletor de Tema (Modo Escuro) */}
+            <View style={styles.themeToggle}>
+              <View style={styles.row}>
+                <Feather name={isDark ? "moon" : "sun"} size={20} color={theme.colors.onSurface} />
+                <Text style={[styles.menuText, { color: theme.colors.onSurface, marginLeft: 15 }]}>
+                  Modo Escuro
+                </Text>
+              </View>
+              <Switch
+                value={isDark}
+                onValueChange={toggleTheme}
+                trackColor={{ false: theme.colors.outline, true: theme.colors.primaryContainer }}
+                thumbColor={isDark ? theme.colors.primary : "#f4f3f4"}
+              />
+            </View>
+
+            <View style={[styles.divider, { backgroundColor: theme.colors.outlineVariant }]} />
+
+            {/* Links de Navegação Comuns */}
             <TouchableOpacity style={styles.menuItem} onPress={() => navigateTo('MapPage')}>
-              <Feather name="search" size={20} color="#333" style={styles.icon} />
-              <Text style={styles.menuText}>Pesquisar</Text>
+              <Feather name="search" size={20} color={theme.colors.onSurface} style={styles.icon} />
+              <Text style={[styles.menuText, { color: theme.colors.onSurface }]}>Pesquisar</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.menuItem} onPress={() => navigateTo('Favorites')}>
-              <Feather name="star" size={20} color="#333" style={styles.icon} />
-              <Text style={styles.menuText}>Favoritos</Text>
+              <Feather name="star" size={20} color={theme.colors.onSurface} style={styles.icon} />
+              <Text style={[styles.menuText, { color: theme.colors.onSurface }]}>Favoritos</Text>
             </TouchableOpacity>
 
+            {/* Seção de Administração - Agrupada em Container */}
             {isAdmin && (
-              <View style={styles.adminSection}>
-                <View style={styles.divider} />
-                <Text style={styles.sectionTitle}>Administração</Text>
+              <View style={[
+                styles.adminCard,
+                { backgroundColor: theme.colors.surfaceContainerLow }
+              ]}>
+                <Text style={[styles.adminTitle, { color: theme.colors.primary }]}>ADMINISTRAÇÃO</Text>
 
-                <TouchableOpacity style={styles.menuItem} onPress={() => navigateTo('Admin')}>
-                  <Feather name="grid" size={20} color="#166534" style={styles.icon} />
-                  <Text style={[styles.menuText, styles.adminText]}>Painel do Admin</Text>
+                <TouchableOpacity style={styles.adminItem} onPress={() => navigateTo('Admin')}>
+                  <Feather name="grid" size={18} color={theme.colors.primary} style={styles.icon} />
+                  <Text style={[styles.menuText, { color: theme.colors.primary }]}>Painel do Admin</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.menuItem} onPress={() => navigateTo('AddRequest')}>
-                  <Feather name="plus-square" size={20} color="#166534" style={styles.icon} />
-                  <Text style={[styles.menuText, styles.adminText]}>Solic. de Adição</Text>
+                <TouchableOpacity style={styles.adminItem} onPress={() => navigateTo('AddRequest')}>
+                  <Feather name="plus-square" size={18} color={theme.colors.primary} style={styles.icon} />
+                  <Text style={[styles.menuText, { color: theme.colors.primary }]}>Solic. de Adição</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.menuItem} onPress={() => navigateTo('EditRequest')}>
-                  <Feather name="edit" size={20} color="#166534" style={styles.icon} />
-                  <Text style={[styles.menuText, styles.adminText]}>Solic. de Edição</Text>
+                <TouchableOpacity style={styles.adminItem} onPress={() => navigateTo('EditRequest')}>
+                  <Feather name="edit" size={18} color={theme.colors.primary} style={styles.icon} />
+                  <Text style={[styles.menuText, { color: theme.colors.primary }]}>Solic. de Edição</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.menuItem} onPress={() => navigateTo('RemoveRequest')}>
-                  <Feather name="trash-2" size={20} color="#166534" style={styles.icon} />
-                  <Text style={[styles.menuText, styles.adminText]}>Solic. de Remoção</Text>
+                <TouchableOpacity style={styles.adminItem} onPress={() => navigateTo('RemoveRequest')}>
+                  <Feather name="trash-2" size={18} color={theme.colors.primary} style={styles.icon} />
+                  <Text style={[styles.menuText, { color: theme.colors.primary }]}>Solic. de Remoção</Text>
                 </TouchableOpacity>
               </View>
             )}
 
-            <View style={styles.divider} />
+            <View style={[styles.divider, { backgroundColor: theme.colors.outlineVariant }]} />
 
+            {/* Ações de Usuário */}
             {username ? (
               <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
-                <Feather name="log-out" size={20} color="#DC2626" style={styles.icon} />
-                <Text style={[styles.menuText, { color: '#DC2626', fontWeight: 'bold' }]}>
+                <Feather name="log-out" size={20} color={theme.colors.error} style={styles.icon} />
+                <Text style={[styles.menuText, { color: theme.colors.error, fontWeight: 'bold' }]}>
                   Sair ({username})
                 </Text>
               </TouchableOpacity>
             ) : (
               <TouchableOpacity style={styles.menuItem} onPress={() => navigateTo('Login')}>
-                <Feather name="user" size={20} color="#333" style={styles.icon} />
-                <Text style={styles.menuText}>Login</Text>
+                <Feather name="user" size={20} color={theme.colors.onSurface} style={styles.icon} />
+                <Text style={[styles.menuText, { color: theme.colors.onSurface }]}>Login</Text>
               </TouchableOpacity>
             )}
 
-            <TouchableOpacity style={styles.menuItem} onPress={() => navigateTo('Register')}>
-              <Feather name="plus" size={20} color="#333" style={styles.icon} />
-              <Text style={styles.menuText}>Criar Conta</Text>
-            </TouchableOpacity>
-
           </ScrollView>
-
         </Animated.View>
         <TouchableOpacity style={styles.transparentArea} onPress={onClose} activeOpacity={1} />
       </View>
@@ -125,15 +149,35 @@ export function Sidebar({ visible, onClose }) {
 
 const styles = StyleSheet.create({
   overlay: { flex: 1, flexDirection: 'row', backgroundColor: 'rgba(0,0,0,0.5)' },
-  menuContainer: { width: '75%', backgroundColor: '#FFF', padding: 20, height: '100%', elevation: 5 },
-  transparentArea: { width: '25%', height: '100%' },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 30, marginBottom: 10 },
-  title: { fontSize: 24, fontWeight: 'bold', color: '#166534' },
-  divider: { height: 1, backgroundColor: '#ccc', marginBottom: 10, marginTop: 10 },
-  menuItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: 15, borderBottomWidth: 1, borderBottomColor: '#f0f0f0' },
+  menuContainer: { width: '80%', padding: 25, height: '100%', elevation: 16 },
+  transparentArea: { width: '20%', height: '100%' },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 40,
+    marginBottom: 25
+  },
+  title: { fontSize: 26, fontWeight: 'bold' },
+  themeToggle: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10
+  },
+  row: { flexDirection: 'row', alignItems: 'center' },
+  divider: { height: 1, marginVertical: 20, opacity: 0.2 },
+  menuItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: 15 },
   icon: { marginRight: 15 },
-  menuText: { fontSize: 16, color: '#333' },
-  adminSection: { backgroundColor: '#F0FDF4', borderRadius: 8, paddingHorizontal: 5, marginBottom: 10 },
-  sectionTitle: { fontSize: 12, color: '#166534', fontWeight: 'bold', marginTop: 10, marginBottom: 5, marginLeft: 10, textTransform: 'uppercase' },
-  adminText: { color: '#166534', fontWeight: '500' }
+  menuText: { fontSize: 16 },
+  adminCard: { borderRadius: 16, padding: 15, marginTop: 10 },
+  adminTitle: {
+    fontSize: 11,
+    fontWeight: 'bold',
+    marginBottom: 15,
+    marginLeft: 10,
+    textTransform: 'uppercase',
+    letterSpacing: 1
+  },
+  adminItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12 }
 });

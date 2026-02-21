@@ -15,11 +15,13 @@ export function PlaceList({ onEditPress }) {
 
   const confirmDelete = (motivo) => {
     setModalVisible(false);
+    // Feedback visual para o usuário sobre a ação administrativa
     Alert.alert("Sucesso", "Pedido de remoção enviado para o administrador.");
   };
 
   return (
     <View style={styles.container}>
+      {/* Mapeamento dos dados para os componentes visuais */}
       {PLACES_DATA.map((place) => (
         <PlaceCard
           key={place.id}
@@ -29,14 +31,14 @@ export function PlaceList({ onEditPress }) {
           recursos={place.recursos}
           description={place.descricao}
           onEdit={() => onEditPress(place)}
-          onFavorite={() => console.log('Favoritar', place.id)}
           onDelete={() => handleDeletePress(place.id)}
         />
       ))}
-      
+
+      {/* Modal de remoção que será estilizado em seguida */}
       <RemoveModal
         visible={modalVisible}
-        onClose={() => setModalVisible(false)}
+        onClose={() => setMenuVisible(false)}
         onConfirm={confirmDelete}
       />
     </View>
@@ -46,6 +48,7 @@ export function PlaceList({ onEditPress }) {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    marginTop: 10,
+    marginTop: 15,
+    paddingBottom: 20,
   }
 });

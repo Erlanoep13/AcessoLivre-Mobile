@@ -1,26 +1,25 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Svg, { G, Path } from 'react-native-svg';
+import { useTheme } from '../contexts/ThemeContext';
 
-// Dados Iguais aos da sua imagem
 const MOCK_DATA = [
   { name: 'Deficiência Motora', value: 35, color: '#dc2626' },
   { name: 'Deficiência Visual', value: 20, color: '#4ade80' },
-  { name: 'Deficiência Motora e Visual', value: 20, color: '#2563eb' },
+  { name: 'Motora e Visual', value: 20, color: '#2563eb' },
   { name: 'Sugestão de Melhoria', value: 25, color: '#d1cfce' },
 ];
 
 export function AdminChart() {
-  const size = 200; // Tamanho do gráfico
-  const radius = size / 2; // Raio
-  const center = size / 2; // Centro
+  const { theme } = useTheme(); //
+  const size = 180;
+  const radius = size / 2;
+  const center = size / 2;
   const totalValue = MOCK_DATA.reduce((sum, item) => sum + item.value, 0);
 
   let startAngle = 0;
 
-  // Função para converter ângulo em coordenadas (x,y)
   const polarToCartesian = (centerX, centerY, radius, angleInDegrees) => {
-    // Subtraímos 90 para começar do topo (meio-dia)
     const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
     return {
       x: centerX + radius * Math.cos(angleInRadians),
@@ -29,46 +28,34 @@ export function AdminChart() {
   };
 
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, { backgroundColor: theme.colors.surfaceContainerLow }]}>
+      <Text style={[styles.cardTitle, { color: theme.colors.onSurface }]}>Locais por Categoria</Text>
 
-
-      {/* Container do Gráfico (Centralizado) */}
       <View style={styles.chartWrapper}>
         <Svg width={size} height={size}>
-          <G rotation={0} origin={`${center}, ${center}`}>
+          <G origin={`${center}, ${center}`}>
             {MOCK_DATA.map((item, index) => {
               const sliceAngle = (item.value / totalValue) * 360;
               const endAngle = startAngle + sliceAngle;
-
-              // Calcula o ponto final do arco na borda
+              const start = polarToCartesian(center, center, radius, startAngle);
               const end = polarToCartesian(center, center, radius, endAngle);
-
               const largeArcFlag = sliceAngle <= 180 ? '0' : '1';
 
-              // Caminho da fatia de pizza:
-              // 1. Move para o centro (L center, center)
-              // 2. Desenha linha até o início do arco (L start.x, start.y) - Opcional se começar do zero
-              // 3. Desenha o arco (A ...)
-              // 4. Fecha o caminho voltando ao centro (Z)
-
-              // Ponto inicial do arco
-              const start = polarToCartesian(center, center, radius, startAngle);
-
               const pathData = [
-                'M', center, center, // Começa no centro
-                'L', start.x, start.y, // Linha até a borda inicial
-                'A', radius, radius, 0, largeArcFlag, 1, end.x, end.y, // Arco
-                'Z', // Fecha voltando ao centro
+                'M', center, center,
+                'L', start.x, start.y,
+                'A', radius, radius, 0, largeArcFlag, 1, end.x, end.y,
+                'Z',
               ].join(' ');
 
-              startAngle += sliceAngle; // Prepara para a próxima fatia
+              startAngle += sliceAngle;
 
               return (
                 <Path
                   key={index}
                   d={pathData}
-                  fill={item.color} // Preenchimento sólido
-                  stroke="#FFF" // Borda branca fina para separar as fatias
+                  fill={item.color}
+                  stroke={theme.colors.surfaceContainerLow}
                   strokeWidth={2}
                 />
               );
@@ -77,78 +64,67 @@ export function AdminChart() {
         </Svg>
       </View>
 
-      {/* Legenda (Agora embaixo do gráfico) */}
       <View style={styles.legendContainer}>
         {MOCK_DATA.map((item, index) => (
-          <View key={index} style={styles.legendItem}>
+          <View key={index} style={[styles.legendItem, { borderBottomColor: theme.colors.outlineVariant + '20' }]}>
             <View style={styles.legendLeft}>
               <View style={[styles.colorDot, { backgroundColor: item.color }]} />
-              <Text style={styles.legendLabel}>{item.name}</Text>
+              <Text style={[styles.legendLabel, { color: theme.colors.onSurfaceVariant }]}>{item.name}</Text>
             </View>
-            <Text style={styles.legendValue}>{item.value}%</Text>
+            <Text style={[styles.legendValue, { color: theme.colors.onSurface }]}>{item.value}%</Text>
           </View>
         ))}
       </View>
-
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#FFF',
-    borderRadius: 12,
-    padding: 20,
-    marginBottom: 16,
+    borderRadius: 24,
+    padding: 24,
+    marginBottom: 20,
     elevation: 2,
     shadowColor: '#000',
     shadowOpacity: 0.05,
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 2 },
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
   },
   cardTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#111827',
-    marginBottom: 20,
+    marginBottom: 25,
     textAlign: 'center',
   },
   chartWrapper: {
-    alignItems: 'center', // Centraliza o SVG horizontalmente
-    marginBottom: 24, // Espaço entre gráfico e legenda
+    alignItems: 'center',
+    marginBottom: 30,
   },
   legendContainer: {
-    // Removemos o flex: 1 e marginLeft que tinham antes
     width: '100%',
   },
   legendItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between', // Separa label (esq) e valor (dir)
-    marginBottom: 12,
-    paddingBottom: 12,
-    borderBottomWidth: 1, // Linha separadora sutil
-    borderBottomColor: '#F3F4F6',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
   },
   legendLeft: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   colorDot: {
-    width: 14,
-    height: 14,
-    borderRadius: 7, // Círculo perfeito
-    marginRight: 10,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginRight: 12,
   },
   legendLabel: {
-    fontSize: 16,
-    color: '#4B5563',
+    fontSize: 14,
   },
   legendValue: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
-    color: '#111827',
   },
 });

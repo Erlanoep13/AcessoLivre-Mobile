@@ -1,135 +1,112 @@
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useTheme } from '../../contexts/ThemeContext';
+import { useUser } from '../../contexts/UserContext';
 
 import { Navbar } from '../../components/Navbar';
 import { SearchBar } from '../../components/SearchBar';
 import { Footer } from '../../components/Footer';
 import { PlaceList } from '../../components/PlaceList/PlaceList';
 import { Map } from '../../components/Map';
-import { ExplicaçoesGerais } from '../../components/ExplicaçoesGerais'; 
-
-// Importamos o contexto para ler o nome
-import { useUser } from '../../contexts/UserContext'; 
+import { ExplicaçoesGerais } from '../../components/ExplicaçoesGerais';
 
 export function MapPage() {
   const navigation = useNavigation();
-  const { username } = useUser(); 
+  const { username } = useUser();
+  const { theme } = useTheme();
 
   return (
-    <View style={styles.container}>
-
-      {/* NAVBAR */}
+    <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
       <Navbar />
 
-      {/* ÁREA DE ROLAGEM (Conteúdo + Footer) */}
-      <ScrollView style={styles.scrollContainer}>
-
-        {/* Barra de pesquisa com espaço do topo */}
+      <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         <View style={styles.spacing}>
           <SearchBar />
         </View>
 
-        {/* --- MENSAGEM DE BOAS-VINDAS --- */}
+        {/* MENSAGEM DE BOAS-VINDAS */}
         {username && (
           <View style={styles.welcomeContainer}>
-            <Text style={styles.welcomeText}>
-              Seja bem-vindo(a), <Text style={styles.nameHighlight}>{username}!</Text>
+            <Text style={[styles.welcomeText, { color: theme.colors.onSurface }]}>
+              Seja bem-vindo(a), <Text style={{ fontWeight: 'bold', color: theme.colors.primary }}>{username}!</Text>
             </Text>
           </View>
         )}
 
         <View style={styles.content}>
-
-          {/* Mapa */}
+          {/* MAPA */}
           <Map />
 
-          {/* BOTÃO DE ADICIONAR LOCAL */}
+          {/* BOTÃO ADICIONAR */}
           <View style={styles.addButtonContainer}>
             <TouchableOpacity
-              style={styles.addButton}
+              style={[styles.addButton, { backgroundColor: theme.colors.primary }]}
               onPress={() => navigation.navigate('AddPlace')}
             >
-              <Text style={styles.addButtonText}>+ Adicionar Local</Text>
+              <Text style={[styles.addButtonText, { color: theme.colors.onPrimary }]}>+ Adicionar Local</Text>
             </TouchableOpacity>
           </View>
 
-          {/* --- LISTA DE LOCAIS --- */}
-          <PlaceList 
-             onEditPress={(place) => navigation.navigate('AddPlace', { placeData: place })}
-          />
-
+          {/* LISTA DE LOCAIS */}
+          <PlaceList onEditPress={(place) => navigation.navigate('AddPlace', { placeData: place })} />
         </View>
 
         {/* FOOTER */}
         <Footer />
-
       </ScrollView>
 
-      {/* --- O BOTÃO FLUTUANTE (FORA DO SCROLLVIEW) ---*/}
+      {/* BOTÃO FLUTUANTE */}
       <View style={styles.floatingButtonContainer}>
-          <ExplicaçoesGerais />
+        <ExplicaçoesGerais />
       </View>
-
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#1e4e28',
+    flex: 1
   },
   scrollContainer: {
-    flex: 1,
+    flex: 1
   },
   spacing: {
-    marginTop: 20,
+    marginTop: 20
   },
   content: {
     paddingHorizontal: 16,
-    marginBottom: 20,
+    marginBottom: 20
   },
-  
-  // --- ESTILO DO BOTÃO FLUTUANTE ---
   floatingButtonContainer: {
-    position: 'absolute', // Isso faz ele flutuar
+    position: 'absolute',
     bottom: 30,
     right: 5,
-    zIndex: 999,
+    zIndex: 999
   },
-
-  // Estilos da mensagem
   welcomeContainer: {
     paddingHorizontal: 16,
     marginBottom: 10,
-    alignItems: 'center', 
+    alignItems: 'center'
   },
   welcomeText: {
-    fontSize: 18,
-    color: '#fff', 
+    fontSize: 18
   },
-  nameHighlight: {
-    fontWeight: 'bold',
-    color: '#ffffffff', 
-  },
-  // Estilo do botão adicionar
   addButtonContainer: {
     alignItems: 'center',
     marginBottom: 10,
-    marginTop: 20,
+    marginTop: 20
   },
   addButton: {
-    backgroundColor: '#22c55e',
     paddingVertical: 12,
     paddingHorizontal: 40,
-    borderRadius: 5,
+    borderRadius: 8,
     width: '100%',
     alignItems: 'center',
+    elevation: 2
   },
   addButtonText: {
-    color: '#fff',
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 16
   }
 });

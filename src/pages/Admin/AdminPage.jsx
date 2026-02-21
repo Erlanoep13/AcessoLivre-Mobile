@@ -1,70 +1,66 @@
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, StatusBar } from 'react-native';
+import { useTheme } from '../../contexts/ThemeContext';
 import { Navbar } from '../../components/Navbar';
 import { Footer } from '../../components/Footer';
 import { AdminChart } from '../../components/AdminChart';
 import { AdminQuickActions } from '../../components/AdminQuickActions';
 
 export function AdminPage() {
-  return (
-    <View style={styles.container}>
+  const { theme, isDark } = useTheme(); //
 
-      {/* Navbar no topo */}
+  return (
+    <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
+      <StatusBar
+        backgroundColor={theme.colors.surfaceContainerHighest}
+        barStyle={isDark ? "light-content" : "dark-content"}
+      />
       <Navbar />
 
-      <ScrollView style={styles.scrollContainer}>
-        <View style={styles.content}>
-          <Text style={styles.pageTitle}>Locais marcados</Text>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* --- MARGEM GLOBAL DE 16PX --- */}
+        <View style={styles.globalMarginContainer}>
+          <View style={styles.header}>
+            <Text style={[styles.title, { color: theme.colors.onSurface }]}>Painel Administrativo</Text>
+            <Text style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}>
+              Resumo estatístico do sistema
+            </Text>
+          </View>
 
           <AdminChart />
-          {/* Botões de Ação Rápida */}
-          <AdminQuickActions
-            addRequests={2}     // Exemplo: 2 pedidos de adição
-            editRequests={6}    // Exemplo: 6 pedidos de edição
-            removeRequests={0}  // 0 pedidos de remoção
-            onPressAdd={() => console.log('Ver adições')}
-            onPressEdit={() => console.log('Ver edições')}
-            onPressRemove={() => console.log('Ver remoções')}
-          />
+          <AdminQuickActions />
         </View>
 
-        {/* Footer no final */}
         <Footer />
-
       </ScrollView>
-
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#1e4e28', // Fundo cinza claro
+    flex: 1
   },
-  scrollContainer: {
-    flex: 1,
+  scrollContent: {
+    flexGrow: 1
   },
-  content: {
-    padding: 16,
-    minHeight: 500, // Garante altura para o footer ficar lá embaixo
-    alignItems: 'center',
+  globalMarginContainer: {
+    paddingHorizontal: 16, // Sua margem global solicitada
+    paddingBottom: 20,
   },
-  pageTitle: {
+  header: {
+    paddingVertical: 20,
+    marginTop: 10
+  },
+  title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#ffffffff', // Verde do tema
-    marginTop: 10,
-    marginBottom: 4,
+    fontWeight: 'bold'
   },
-  placeholder: {
-    height: 200,
-    borderWidth: 2,
-    borderColor: '#E5E7EB',
-    borderStyle: 'dashed',
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 20,
-  }
+  subtitle: {
+    fontSize: 14,
+    marginTop: 4
+  },
 });

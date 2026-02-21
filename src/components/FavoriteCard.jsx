@@ -1,45 +1,18 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useTheme } from '../contexts/ThemeContext';
 
-// Os dados ficam aqui dentro agora, isolados
+// Dados Mockados para exibição
 const FAVORITES_DATA = [
-  { 
-    id: '1', 
-    name: 'Praça da Matriz', 
-    address: 'Boa Viagem - Centro', 
-    accessibility: 'Motora', 
-    description: 'Vaga de estacionamento e rampa.', 
-    recursos: 'Estacionamento' 
-  },
-  { 
-    id: '2', 
-    name: 'IFCE', 
-    address: 'Rod. Pres. Juscelino Kubitschek', 
-    accessibility: 'Motora', 
-    description: 'Rampas e banheiros adaptados.', 
-    recursos: 'Banheiros adaptados' 
-  },
-  { 
-    id: '3', 
-    name: 'Hospital Municipal', 
-    address: 'Av. São Vicente', 
-    accessibility: 'Visual', 
-    description: 'Piso tátil.', 
-    recursos: 'Piso tátil' 
-  },
-  { 
-    id: '4', 
-    name: 'Biblioteca', 
-    address: 'Rua 25', 
-    accessibility: 'Auditiva', 
-    description: 'Intérpretes.', 
-    recursos: 'Libras' 
-  }
+  { id: '1', name: 'Praça da Matriz', address: 'Boa Viagem - Centro', accessibility: 'Motora', description: 'Vaga de estacionamento e rampa.', recursos: 'Estacionamento' },
+  { id: '2', name: 'IFCE', address: 'Rod. Pres. Juscelino Kubitschek', accessibility: 'Motora', description: 'Rampas e banheiros adaptados.', recursos: 'Banheiros adaptados' },
+  { id: '3', name: 'Hospital Municipal', address: 'Av. São Vicente', accessibility: 'Visual', description: 'Piso tátil.', recursos: 'Piso tátil' }
 ];
 
 export function FavoriteCard() {
-  // Função para remover (apenas visual por enquanto)
+  const { theme } = useTheme();
+
   const handleRemove = (id) => {
     console.log('Remover item:', id);
   };
@@ -47,37 +20,43 @@ export function FavoriteCard() {
   return (
     <View>
       {FAVORITES_DATA.map((item) => (
-        <View key={item.id} style={styles.card}>
-          
-          {/* Título e Endereço */}
-          <Text style={styles.title}>{item.name}</Text>
-          <Text style={styles.address}>{item.address}</Text>
+        <View key={item.id} style={[
+          styles.card,
+          { backgroundColor: theme.colors.surfaceContainerLow }
+        ]}>
 
-          {/* Detalhes */}
-          <View style={styles.infoContainer}>
-            <Text style={styles.label}>
+          {/* Título e Endereço */}
+          <Text style={[styles.title, { color: theme.colors.primary }]}>{item.name}</Text>
+          <Text style={[styles.address, { color: theme.colors.onSurfaceVariant }]}>{item.address}</Text>
+
+          {/* Detalhes Técnicos em container surfaceVariant */}
+          <View style={[styles.infoContainer, { backgroundColor: theme.colors.surfaceVariant }]}>
+            <Text style={[styles.label, { color: theme.colors.onSurface }]}>
               Acessibilidade: <Text style={styles.value}>{item.accessibility}</Text>
             </Text>
             {item.recursos && (
-              <Text style={styles.label}>
+              <Text style={[styles.label, { color: theme.colors.onSurface }]}>
                 Recursos: <Text style={styles.value}>{item.recursos}</Text>
               </Text>
             )}
-            <Text style={styles.label}>
+            <Text style={[styles.label, { color: theme.colors.onSurface }]}>
               Descrição: <Text style={styles.value}>{item.description}</Text>
             </Text>
           </View>
 
-          <View style={styles.divider} />
+          <View style={[styles.divider, { backgroundColor: theme.colors.outlineVariant, opacity: 0.3 }]} />
 
-          {/* Botão Remover */}
+          {/* Ação de Remover */}
           <View style={styles.actionsContainer}>
-            <TouchableOpacity 
-              onPress={() => handleRemove(item.id)} 
-              style={styles.favoriteButton}
+            <TouchableOpacity
+              onPress={() => handleRemove(item.id)}
+              style={[styles.favoriteButton, { backgroundColor: theme.colors.errorContainer }]}
+              activeOpacity={0.8}
             >
-              <Feather name="heart" size={20} color="#d32f2f" />
-              <Text style={styles.favoriteText}>Remover dos Favoritos</Text>
+              <Feather name="heart" size={18} color={theme.colors.error} />
+              <Text style={[styles.favoriteText, { color: theme.colors.onErrorContainer }]}>
+                Remover dos Favoritos
+              </Text>
             </TouchableOpacity>
           </View>
 
@@ -89,13 +68,10 @@ export function FavoriteCard() {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
+    borderRadius: 20,
     padding: 16,
     marginBottom: 16,
-    borderWidth: 1,
-    borderColor: '#eee',
-    elevation: 2, 
+    elevation: 1,
     shadowColor: '#000',
     shadowOpacity: 0.05,
     shadowRadius: 4,
@@ -104,32 +80,27 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#166534',
-    marginBottom: 4,
+    marginBottom: 2,
   },
   address: {
     fontSize: 14,
-    color: '#666',
     marginBottom: 12,
   },
   infoContainer: {
-    backgroundColor: '#F9FAFB',
-    padding: 10,
-    borderRadius: 8,
+    padding: 12,
+    borderRadius: 12,
   },
   label: {
     fontSize: 13,
     fontWeight: 'bold',
-    color: '#333',
     marginBottom: 4,
   },
   value: {
     fontWeight: 'normal',
-    color: '#555',
+    opacity: 0.8,
   },
   divider: {
     height: 1,
-    backgroundColor: '#eee',
     marginVertical: 12,
   },
   actionsContainer: {
@@ -139,15 +110,13 @@ const styles = StyleSheet.create({
   favoriteButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FEF2F2',
     paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 20,
+    paddingHorizontal: 16,
+    borderRadius: 100,
   },
   favoriteText: {
     marginLeft: 8,
-    color: '#d32f2f',
-    fontWeight: '600',
+    fontWeight: 'bold',
     fontSize: 13,
   }
 });

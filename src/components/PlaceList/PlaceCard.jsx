@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useTheme } from '../../contexts/ThemeContext';
 
 export function PlaceCard({
   name,
@@ -12,31 +13,38 @@ export function PlaceCard({
   onDelete
 }) {
   const [isFavorite, setIsFavorite] = useState(false);
+  const { theme } = useTheme();
 
   return (
-    <View style={styles.card}>
-      <Text style={styles.title}>{name}</Text>
-      <Text style={styles.address}>{address}</Text>
+    <View style={[
+      styles.card,
+      { backgroundColor: theme.colors.surfaceContainerLow }
+    ]}>
+      {/* Cabeçalho do Card */}
+      <View style={styles.header}>
+        <View style={styles.titleArea}>
+          <Text style={[styles.title, { color: theme.colors.onSurface }]}>{name}</Text>
+          <Text style={[styles.address, { color: theme.colors.onSurfaceVariant }]}>{address}</Text>
+        </View>
 
-      <Text style={styles.label}>
-        Acessibilidade: <Text style={styles.value}>{accessibility}</Text>
-      </Text>
+        {/* Ícone de Imagem lateral (Placeholder como no protótipo) */}
+        <View style={[styles.imagePlaceholder, { backgroundColor: theme.colors.surfaceContainerHigh }]}>
+          <Feather name="image" size={20} color={theme.colors.onSurfaceVariant} />
+        </View>
+      </View>
 
-      <Text style={styles.label}>
-        Recursos: <Text style={styles.value}>{recursos}</Text>
-      </Text>
-      
-      <Text style={styles.label}>
-        Descrição: <Text style={styles.value}>{description}</Text>
-      </Text>
+      {/* Informações Técnicas */}
+      <View style={styles.infoArea}>
+        <Text style={[styles.label, { color: theme.colors.onSurface }]}>
+          Acessibilidade: <Text style={styles.value}>{accessibility}</Text>
+        </Text>
+        <Text style={[styles.label, { color: theme.colors.onSurface }]}>
+          Recursos: <Text style={styles.value}>{recursos}</Text>
+        </Text>
+      </View>
 
-      <View style={styles.actionsContainer}>
-        {/* Botão Editar */}
-        <TouchableOpacity onPress={onEdit} style={styles.iconButton}>
-          <Feather name="edit-2" size={20} color="#333" />
-        </TouchableOpacity>
-
-        {/* Botão Favoritar */}
+      {/* Barra de Ações baseada no protótipo */}
+      <View style={[styles.actionsContainer, { borderTopColor: theme.colors.outlineVariant }]}>
         <TouchableOpacity
           onPress={() => setIsFavorite(!isFavorite)}
           style={styles.iconButton}
@@ -44,13 +52,16 @@ export function PlaceCard({
           <Feather
             name="heart"
             size={20}
-            color={isFavorite ? "#d32f2f" : "#333"} // Muda a cor da borda se for favoritado
+            color={isFavorite ? theme.colors.error : theme.colors.onSurfaceVariant}
           />
         </TouchableOpacity>
 
-        {/* Botão Deletar */}
+        <TouchableOpacity onPress={onEdit} style={styles.iconButton}>
+          <Feather name="edit-2" size={20} color={theme.colors.onSurfaceVariant} />
+        </TouchableOpacity>
+
         <TouchableOpacity onPress={onDelete} style={styles.iconButton}>
-          <Feather name="trash-2" size={20} color="#333" />
+          <Feather name="trash-2" size={20} color={theme.colors.onSurfaceVariant} />
         </TouchableOpacity>
       </View>
     </View>
@@ -59,46 +70,59 @@ export function PlaceCard({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
+    borderRadius: 16,
     padding: 16,
-    marginBottom: 16,
+    marginBottom: 12,
+    elevation: 1,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  titleArea: {
+    flex: 1,
+    marginRight: 10,
   },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#000',
-    marginBottom: 4,
+    marginBottom: 2,
   },
   address: {
     fontSize: 14,
-    color: '#666',
+  },
+  imagePlaceholder: {
+    width: 48,
+    height: 48,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  infoArea: {
     marginBottom: 12,
   },
   label: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 4,
+    marginBottom: 2,
   },
   value: {
     fontWeight: 'normal',
-    color: '#444',
+    opacity: 0.8,
   },
   actionsContainer: {
     flexDirection: 'row',
-    marginTop: 12,
-    gap: 20,
+    justifyContent: 'flex-end',
     borderTopWidth: 1,
-    borderTopColor: '#f0f0f0',
     paddingTop: 10,
+    gap: 15,
   },
   iconButton: {
-    padding: 4,
+    padding: 8,
   }
 });
