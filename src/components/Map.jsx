@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, Modal, Alert, Image } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
-import { Feather } from '@expo/vector-icons';
+// Trocamos a biblioteca Feather pela oficial do Material Design
+import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { PLACES_DATA } from '../data/places';
 import { RemoveModal } from './RemoveModal';
@@ -26,6 +27,7 @@ const mapDarkStyle = [
     { "featureType": "water", "elementType": "geometry", "stylers": [{ "color": "#000000" }] }
 ];
 
+// INTACTO: Os marcadores do mapa não foram alterados!
 const MARKER_ICONS = {
     'Motora': require('../../assets/markers/IconeMotora.png'),
     'Visual': require('../../assets/markers/IconeVisual.png'),
@@ -40,16 +42,17 @@ const getMarkerImage = (tipo) => {
     return MARKER_ICONS[tipo] || MARKER_ICONS['default'];
 };
 
+// Adicionamos as propriedades "icon" para exibir os símbolos do M3 na legenda
 const LEGEND_ITEMS = [
-    { color: "#ff0100", label: "Deficiência Motora" },
-    { color: "#69ee0c", label: "Deficiência Visual" },
-    { color: "#3b6bff", label: "Motora e Visual" },
-    { color: "#d1cfce", label: "Sugestões de melhoria" },
+    { color: "#ff0100", label: "Deficiência Motora", icon: "accessible" },
+    { color: "#69ee0c", label: "Deficiência Visual", icon: "blind" },
+    { color: "#3b6bff", label: "Motora e Visual", icon: "accessibility" },
+    { color: "#d1cfce", label: "Sugestões de melhoria", icon: "build" },
 ];
 
 export function Map() {
     const navigation = useNavigation();
-    const { theme, isDark } = useTheme(); // Acessando o tema e o estado isDark
+    const { theme, isDark } = useTheme();
 
     const [isFullScreen, setIsFullScreen] = useState(false);
     const [tempMarker, setTempMarker] = useState(null);
@@ -88,9 +91,9 @@ export function Map() {
                 style={styles.map}
                 initialRegion={INITIAL_REGION}
                 onPress={handleMapPress}
-                // Aplica o estilo escuro se isDark for verdadeiro
                 customMapStyle={isDark ? mapDarkStyle : []}
             >
+                {/* INTACTO: Renderização dos marcadores originais */}
                 {PLACES_DATA.map((place) => (
                     <Marker
                         key={place.id}
@@ -122,7 +125,7 @@ export function Map() {
                             style={styles.closeCardButton}
                             onPress={() => setSelectedMarker(null)}
                         >
-                            <Feather name="x" size={20} color={theme.colors.onSurfaceVariant} />
+                            <MaterialIcons name="close" size={24} color={theme.colors.onSurfaceVariant} />
                         </TouchableOpacity>
 
                         <Text style={[styles.cardTitle, { color: theme.colors.onSurface }]}>{selectedMarker.nome}</Text>
@@ -137,20 +140,19 @@ export function Map() {
                                 navigation.navigate('AddPlace', { placeData: selectedMarker });
                                 setSelectedMarker(null);
                             }}>
-                                <Feather name="edit-2" size={20} color={theme.colors.onSurface} />
+                                <MaterialIcons name="edit" size={22} color={theme.colors.onSurface} />
                             </TouchableOpacity>
 
                             <TouchableOpacity onPress={() => setIsCardFavorite(!isCardFavorite)}>
-                                <Feather
-                                    name="heart"
-                                    size={20}
+                                <MaterialIcons
+                                    name={isCardFavorite ? "favorite" : "favorite-border"}
+                                    size={22}
                                     color={isCardFavorite ? theme.colors.error : theme.colors.onSurface}
-                                    fill={isCardFavorite ? theme.colors.error : "transparent"}
                                 />
                             </TouchableOpacity>
 
                             <TouchableOpacity onPress={handleDeletePress}>
-                                <Feather name="trash-2" size={20} color={theme.colors.error} />
+                                <MaterialIcons name="delete-outline" size={22} color={theme.colors.error} />
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -164,21 +166,22 @@ export function Map() {
                         <Text style={[styles.addPlaceTitle, { color: theme.colors.onSurface }]}>Adicionar novo local aqui?</Text>
                         <View style={styles.addPlaceButtons}>
                             <TouchableOpacity style={[styles.addBtn, { backgroundColor: theme.colors.error }]} onPress={() => setTempMarker(null)}>
-                                <Text style={{ color: '#fff', fontWeight: 'bold' }}>Cancelar</Text>
+                                <Text style={{ color: theme.colors.onError, fontWeight: 'bold' }}>Cancelar</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={[styles.addBtn, { backgroundColor: theme.colors.primary }]} onPress={handleAddPlace}>
-                                <Text style={{ color: '#fff', fontWeight: 'bold' }}>Confirmar</Text>
+                                <Text style={{ color: theme.colors.onPrimary, fontWeight: 'bold' }}>Confirmar</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
                 </View>
             )}
 
+            {/* Botão Tela Cheia Atualizado */}
             <TouchableOpacity
                 style={[styles.fullscreenButton, { backgroundColor: theme.colors.primary }]}
                 onPress={() => setIsFullScreen(!isFullScreen)}
             >
-                <Feather name={isFull ? "minimize" : "maximize"} size={24} color={theme.colors.onPrimary} />
+                <MaterialIcons name={isFull ? "fullscreen-exit" : "fullscreen"} size={26} color={theme.colors.onPrimary} />
             </TouchableOpacity>
         </View>
     );
@@ -187,12 +190,14 @@ export function Map() {
         <View style={[styles.wrapper, { backgroundColor: theme.colors.surface, borderColor: theme.colors.outline }]}>
             <View style={styles.container}>{renderMapView(false)}</View>
 
+            {/* LEGENDA ATUALIZADA COM ÍCONES M3 */}
             <View style={[styles.legendContainer, { backgroundColor: theme.colors.surfaceVariant }]}>
                 <Text style={[styles.legendTitle, { color: theme.colors.onSurfaceVariant }]}>Suporte a:</Text>
                 <View style={styles.legendGrid}>
                     {LEGEND_ITEMS.map((item, index) => (
                         <View key={index} style={styles.legendItem}>
-                            <View style={[styles.dot, { backgroundColor: item.color }]} />
+                            {/* Pontinho colorido substituído pelo ícone representativo */}
+                            <MaterialIcons name={item.icon} size={18} color={item.color} style={styles.legendIcon} />
                             <Text style={[styles.legendText, { color: theme.colors.onSurface }]}>{item.label}</Text>
                         </View>
                     ))}
@@ -216,23 +221,23 @@ const styles = StyleSheet.create({
     wrapper: { marginBottom: 15, borderRadius: 8, overflow: 'hidden', elevation: 3, borderWidth: 0.5 },
     container: { height: 410, width: '100%' },
     map: { width: '100%', height: '100%' },
-    fullscreenButton: { position: 'absolute', bottom: 10, left: 10, padding: 10, borderRadius: 4, elevation: 5 },
+    fullscreenButton: { position: 'absolute', bottom: 10, left: 10, padding: 8, borderRadius: 8, elevation: 5 },
     fullscreenContainer: { flex: 1 },
     floatingCardContainer: { position: 'absolute', top: 20, left: 20, right: 20, alignItems: 'center', zIndex: 10 },
-    cardContent: { borderRadius: 10, padding: 16, width: '100%', elevation: 5, borderWidth: 0.5 },
-    closeCardButton: { position: 'absolute', top: 10, right: 10, zIndex: 1, padding: 5 },
-    cardTitle: { fontWeight: 'bold', fontSize: 18, marginBottom: 4, paddingRight: 20 },
+    cardContent: { borderRadius: 12, padding: 16, width: '100%', elevation: 5, borderWidth: 0.5 },
+    closeCardButton: { position: 'absolute', top: 8, right: 8, zIndex: 1, padding: 5 },
+    cardTitle: { fontWeight: 'bold', fontSize: 18, marginBottom: 4, paddingRight: 24 },
     cardAddress: { fontSize: 12, marginBottom: 8 },
-    cardResources: { fontSize: 14, marginBottom: 12 },
-    cardActions: { flexDirection: 'row', justifyContent: 'flex-start', gap: 25, borderTopWidth: 1, paddingTop: 10 },
-    addPlaceCard: { borderWidth: 0.5, borderRadius: 10, padding: 20, width: 300, alignItems: 'center', elevation: 5 },
+    cardResources: { fontSize: 14, marginBottom: 16 },
+    cardActions: { flexDirection: 'row', justifyContent: 'flex-start', gap: 25, borderTopWidth: 1, paddingTop: 12 },
+    addPlaceCard: { borderWidth: 0.5, borderRadius: 12, padding: 20, width: '90%', alignItems: 'center', elevation: 5 },
     addPlaceTitle: { fontSize: 16, fontWeight: 'bold', marginBottom: 15 },
-    addPlaceButtons: { flexDirection: 'row', gap: 40 },
-    addBtn: { paddingVertical: 8, paddingHorizontal: 20, borderRadius: 5 },
-    legendContainer: { padding: 12, borderTopWidth: 1, borderTopColor: 'rgba(0,0,0,0.1)' },
-    legendTitle: { fontSize: 11, fontWeight: 'bold', marginBottom: 8, textTransform: 'uppercase' },
-    legendGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-    legendItem: { flexDirection: 'row', alignItems: 'center', marginRight: 12, marginBottom: 4 },
-    dot: { width: 10, height: 10, borderRadius: 5, marginRight: 6 },
-    legendText: { fontSize: 12 },
+    addPlaceButtons: { flexDirection: 'row', gap: 20, width: '100%', justifyContent: 'center' },
+    addBtn: { paddingVertical: 10, paddingHorizontal: 24, borderRadius: 8 },
+    legendContainer: { padding: 16, borderTopWidth: 1, borderTopColor: 'rgba(0,0,0,0.1)' },
+    legendTitle: { fontSize: 12, fontWeight: 'bold', marginBottom: 10, textTransform: 'uppercase' },
+    legendGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
+    legendItem: { flexDirection: 'row', alignItems: 'center', marginRight: 12, marginBottom: 6 },
+    legendIcon: { marginRight: 6 },
+    legendText: { fontSize: 13, fontWeight: '500' },
 });

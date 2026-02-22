@@ -1,43 +1,124 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import { Button, Badge } from 'react-native-paper';
+import { MaterialIcons } from '@expo/vector-icons'; // Importamos os ícones do Expo
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../contexts/ThemeContext';
 
 export function AdminQuickActions({ addRequests = 0, editRequests = 0, removeRequests = 0 }) {
+  // 1. Instanciamos a navegação real
   const navigation = useNavigation();
   const { theme } = useTheme();
 
-  const ActionButton = ({ label, notificationCount, onPress }) => (
-    <TouchableOpacity
-      style={[styles.button, { backgroundColor: theme.colors.surfaceVariant, borderColor: theme.colors.outlineVariant }]}
-      onPress={onPress}
-      activeOpacity={0.7}
-    >
-      <Text style={[styles.buttonText, { color: theme.colors.onSurface }]}>{label}</Text>
-
-      {notificationCount > 0 && (
-        <View style={[styles.badge, { backgroundColor: theme.colors.error, borderColor: theme.colors.surface }]}>
-          <Text style={[styles.badgeText, { color: theme.colors.onError }]}>
-            {notificationCount > 9 ? '9+' : notificationCount}
-          </Text>
-        </View>
-      )}
-    </TouchableOpacity>
-  );
-
   return (
     <View style={styles.container}>
-      <ActionButton label="Pedidos de Adição" notificationCount={addRequests} onPress={() => navigation.navigate('AddRequest')} />
-      <ActionButton label="Pedidos de Edição" notificationCount={editRequests} onPress={() => navigation.navigate('EditRequest')} />
-      <ActionButton label="Pedidos de Remoção" notificationCount={removeRequests} onPress={() => navigation.navigate('RemoveRequest')} />
+      
+      {/* --- BOTÃO DE ADIÇÃO --- */}
+      <View style={styles.buttonWrapper}>
+        <Button
+          mode="contained-tonal"
+          // 2. Usamos uma função para renderizar um ícone Customizado Maior (size 32)
+          icon={({ color }) => <MaterialIcons name="add-circle-outline" size={32} color={color} />}
+          buttonColor={theme.colors.surfaceVariant}
+          textColor={theme.colors.onSurface}
+          style={[styles.button, { borderColor: theme.colors.outlineVariant }]}
+          contentStyle={styles.buttonContent}
+          labelStyle={styles.buttonText}
+          // 3. A navegação acionada diretamente no onPress
+          onPress={() => navigation.navigate('AddRequest')} 
+        >
+          Pedidos de Adição
+        </Button>
+
+        {addRequests > 0 && (
+          <Badge style={[styles.badge, { backgroundColor: theme.colors.error, color: theme.colors.onError }]} size={26}>
+            {addRequests > 9 ? '9+' : addRequests}
+          </Badge>
+        )}
+      </View>
+
+      {/* --- BOTÃO DE EDIÇÃO --- */}
+      <View style={styles.buttonWrapper}>
+        <Button
+          mode="contained-tonal"
+          // Ícone customizado maior
+          icon={({ color }) => <MaterialIcons name="edit" size={32} color={color} />}
+          buttonColor={theme.colors.surfaceVariant}
+          textColor={theme.colors.onSurface}
+          style={[styles.button, { borderColor: theme.colors.outlineVariant }]}
+          contentStyle={styles.buttonContent}
+          labelStyle={styles.buttonText}
+          // Navegação direta
+          onPress={() => navigation.navigate('EditRequest')} 
+        >
+          Pedidos de Edição
+        </Button>
+
+        {editRequests > 0 && (
+          <Badge style={[styles.badge, { backgroundColor: theme.colors.error, color: theme.colors.onError }]} size={26}>
+            {editRequests > 9 ? '9+' : editRequests}
+          </Badge>
+        )}
+      </View>
+
+      {/* --- BOTÃO DE REMOÇÃO --- */}
+      <View style={styles.buttonWrapper}>
+        <Button
+          mode="contained-tonal"
+          // Ícone customizado maior
+          icon={({ color }) => <MaterialIcons name="delete-outline" size={32} color={color} />}
+          buttonColor={theme.colors.surfaceVariant}
+          textColor={theme.colors.onSurface}
+          style={[styles.button, { borderColor: theme.colors.outlineVariant }]}
+          contentStyle={styles.buttonContent}
+          labelStyle={styles.buttonText}
+          // Navegação direta
+          onPress={() => navigation.navigate('RemoveRequest')} 
+        >
+          Pedidos de Remoção
+        </Button>
+
+        {removeRequests > 0 && (
+          <Badge style={[styles.badge, { backgroundColor: theme.colors.error, color: theme.colors.onError }]} size={26}>
+            {removeRequests > 9 ? '9+' : removeRequests}
+          </Badge>
+        )}
+      </View>
+
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { width: '100%', paddingHorizontal: 4, marginBottom: 20 },
-  button: { paddingVertical: 18, borderRadius: 12, marginBottom: 16, alignItems: 'center', justifyContent: 'center', position: 'relative', elevation: 2, borderWidth: 1 },
-  buttonText: { fontSize: 16, fontWeight: 'bold' },
-  badge: { position: 'absolute', top: -10, right: -5, borderRadius: 12, minWidth: 26, height: 26, justifyContent: 'center', alignItems: 'center', borderWidth: 2, paddingHorizontal: 4, elevation: 4 },
-  badgeText: { fontSize: 12, fontWeight: 'bold' }
+  container: { 
+    width: '100%', 
+    paddingHorizontal: 4, 
+    marginBottom: 20 
+  },
+  buttonWrapper: {
+    marginBottom: 16,
+    position: 'relative', // Essencial para o Badge sobrepor o botão
+  },
+  button: { 
+    borderRadius: 12, 
+    borderWidth: 1,
+    elevation: 2,
+  },
+  buttonContent: {
+    paddingVertical: 12, // Um pouco mais alto para comportar o ícone tamanho 32
+    justifyContent: 'flex-start', // Alinha o conteúdo à esquerda
+    paddingLeft: 1,
+  },
+  buttonText: { 
+    fontSize: 16, 
+    fontWeight: 'bold',
+    marginLeft: 25, // Afasta um pouquinho o texto do ícone grande
+  },
+  badge: { 
+    position: 'absolute', 
+    top: -8, 
+    right: -4, 
+    fontWeight: 'bold',
+    fontSize: 13,
+  }
 });

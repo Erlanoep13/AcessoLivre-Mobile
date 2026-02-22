@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+// 1. Importando o pacote oficial do Material Design
+import { MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '../../contexts/ThemeContext';
 
 export function PlaceCard({
@@ -27,9 +28,9 @@ export function PlaceCard({
           <Text style={[styles.address, { color: theme.colors.onSurfaceVariant }]}>{address}</Text>
         </View>
 
-        {/* Ícone de Imagem lateral (Placeholder como no protótipo) */}
+        {/* 2. Ícone de Imagem atualizado */}
         <View style={[styles.imagePlaceholder, { backgroundColor: theme.colors.surfaceContainerHigh }]}>
-          <Feather name="image" size={20} color={theme.colors.onSurfaceVariant} />
+          <MaterialIcons name="image" size={24} color={theme.colors.onSurfaceVariant} />
         </View>
       </View>
 
@@ -45,23 +46,26 @@ export function PlaceCard({
 
       {/* Barra de Ações baseada no protótipo */}
       <View style={[styles.actionsContainer, { borderTopColor: theme.colors.outlineVariant }]}>
+        
+        {/* 3. Ícone de favorito dinâmico (Vazado vs Preenchido) */}
         <TouchableOpacity
           onPress={() => setIsFavorite(!isFavorite)}
           style={styles.iconButton}
         >
-          <Feather
-            name="heart"
-            size={20}
+          <MaterialIcons
+            name={isFavorite ? "favorite" : "favorite-border"}
+            size={22}
             color={isFavorite ? theme.colors.error : theme.colors.onSurfaceVariant}
           />
         </TouchableOpacity>
 
+        {/* 4. Ícones de edição e exclusão atualizados */}
         <TouchableOpacity onPress={onEdit} style={styles.iconButton}>
-          <Feather name="edit-2" size={20} color={theme.colors.onSurfaceVariant} />
+          <MaterialIcons name="edit" size={22} color={theme.colors.onSurfaceVariant} />
         </TouchableOpacity>
 
         <TouchableOpacity onPress={onDelete} style={styles.iconButton}>
-          <Feather name="trash-2" size={20} color={theme.colors.onSurfaceVariant} />
+          <MaterialIcons name="delete-outline" size={22} color={theme.colors.onSurfaceVariant} />
         </TouchableOpacity>
       </View>
     </View>

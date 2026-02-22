@@ -35,10 +35,11 @@ export function PlaceList({ onEditPress }) {
         />
       ))}
 
-      {/* Modal de remoção que será estilizado em seguida */}
+      {/* Modal de remoção */}
       <RemoveModal
         visible={modalVisible}
-        onClose={() => setMenuVisible(false)}
+        // AQUI ESTAVA O ERRO: Trocado de setMenuVisible para setModalVisible 👇
+        onClose={() => setModalVisible(false)} 
         onConfirm={confirmDelete}
       />
     </View>

@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import {
     View,
-    Text,
-    TextInput,
     TouchableOpacity,
     StyleSheet,
     Image,
     Alert,
     ActivityIndicator
 } from 'react-native';
-import { Feather, MaterialIcons } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
-import { useTheme } from '../contexts/ThemeContext'; //
+import { useTheme } from '../contexts/ThemeContext';
+// Importando os componentes do Material Design 3
+import { TextInput, Button, Chip, Text } from 'react-native-paper';
 
 export function AddPlaceForm({ initialCoordinate, initialData }) {
     const navigation = useNavigation();
-    const { theme, isDark } = useTheme(); //
+    const { theme } = useTheme();
 
     const [nome, setNome] = useState('');
     const [localizacao, setLocalizacao] = useState('');
@@ -34,6 +34,17 @@ export function AddPlaceForm({ initialCoordinate, initialData }) {
         { label: 'Ambas', value: 'Ambas' },
         { label: 'Sugestão', value: 'Sugestão de melhoria' }
     ];
+
+    // 1. Objeto criado para forçar o input a respeitar o Modo Escuro da sua equipe
+    const paperInputTheme = {
+        colors: {
+            background: theme.colors.surfaceVariant,
+            primary: theme.colors.primary,
+            onSurfaceVariant: theme.colors.onSurfaceVariant,
+            onSurface: theme.colors.onSurface,
+            text: theme.colors.onSurface,
+        }
+    };
 
     // Efeito para EDIÇÃO
     useEffect(() => {
@@ -128,76 +139,84 @@ export function AddPlaceForm({ initialCoordinate, initialData }) {
         <View style={styles.container}>
             <View style={[styles.card, { backgroundColor: theme.colors.surfaceContainerLow }]}>
 
-                {/* NOME */}
-                <Text style={[styles.label, { color: theme.colors.onSurface }]}>Nome do Local <Text style={styles.required}>*</Text></Text>
+                {/* 2. Aplicando o paperInputTheme */}
                 <TextInput
-                    style={[styles.input, { backgroundColor: theme.colors.surfaceVariant, color: theme.colors.onSurface }]}
+                    mode="outlined"
+                    label="Nome do Local *"
                     placeholder="Ex: Biblioteca Municipal"
-                    placeholderTextColor={theme.colors.onSurfaceVariant}
                     value={nome}
                     onChangeText={setNome}
+                    style={styles.input}
+                    theme={paperInputTheme}
+                    outlineColor={theme.colors.outlineVariant}
+                    activeOutlineColor={theme.colors.primary}
+                    textColor={theme.colors.onSurface}
                 />
 
-                {/* LOCALIZAÇÃO */}
-                <Text style={[styles.label, { color: theme.colors.onSurface }]}>Localização <Text style={styles.required}>*</Text></Text>
-                <View style={styles.inputWithIcon}>
-                    <TextInput
-                        style={[styles.input, { flex: 1, backgroundColor: theme.colors.surfaceVariant, color: theme.colors.onSurface }]}
-                        placeholder="Endereço ou coordenadas"
-                        placeholderTextColor={theme.colors.onSurfaceVariant}
-                        value={localizacao}
-                        onChangeText={setLocalizacao}
-                    />
-                    {loadingCoords && <ActivityIndicator size="small" color={theme.colors.primary} style={styles.loader} />}
-                </View>
+                <TextInput
+                    mode="outlined"
+                    label="Localização *"
+                    placeholder="Endereço ou coordenadas"
+                    value={localizacao}
+                    onChangeText={setLocalizacao}
+                    style={styles.input}
+                    theme={paperInputTheme}
+                    outlineColor={theme.colors.outlineVariant}
+                    activeOutlineColor={theme.colors.primary}
+                    textColor={theme.colors.onSurface}
+                    right={loadingCoords ? <TextInput.Icon icon={() => <ActivityIndicator size="small" color={theme.colors.primary} />} /> : null}
+                />
 
-                {/* TIPO DE MARCAÇÃO (4 BOTÕES SELECIONÁVEIS) */}
-                <Text style={[styles.label, { color: theme.colors.onSurface }]}>Tipo de Marcação <Text style={styles.required}>*</Text></Text>
+                <Text style={[styles.chipLabel, { color: theme.colors.onSurface }]}>Tipo de Marcação *</Text>
                 <View style={styles.chipContainer}>
                     {tiposAcessibilidade.map((item) => (
-                        <TouchableOpacity
+                        <Chip
                             key={item.value}
+                            mode="flat"
+                            selected={tipo === item.value}
+                            showSelectedOverlay 
                             onPress={() => setTipo(item.value)}
                             style={[
                                 styles.chip,
-                                {
-                                    backgroundColor: tipo === item.value ? theme.colors.primaryContainer : theme.colors.surfaceVariant,
-                                    borderColor: tipo === item.value ? theme.colors.primary : 'transparent'
-                                }
+                                { backgroundColor: tipo === item.value ? theme.colors.primaryContainer : theme.colors.surfaceVariant }
                             ]}
+                            textStyle={{ 
+                                color: tipo === item.value ? theme.colors.onPrimaryContainer : theme.colors.onSurfaceVariant,
+                                fontWeight: 'bold' 
+                            }}
                         >
-                            <Text style={[
-                                styles.chipText,
-                                { color: tipo === item.value ? theme.colors.onPrimaryContainer : theme.colors.onSurfaceVariant }
-                            ]}>
-                                {item.label}
-                            </Text>
-                        </TouchableOpacity>
+                            {item.label}
+                        </Chip>
                     ))}
                 </View>
 
-                {/* CATEGORIA */}
-                <Text style={[styles.label, { color: theme.colors.onSurface }]}>Categoria do Local</Text>
                 <TextInput
-                    style={[styles.input, { backgroundColor: theme.colors.surfaceVariant, color: theme.colors.onSurface }]}
+                    mode="outlined"
+                    label="Categoria do Local"
                     placeholder="Ex: Saúde, Lazer, Educação..."
-                    placeholderTextColor={theme.colors.onSurfaceVariant}
                     value={categoria}
                     onChangeText={setCategoria}
+                    style={styles.input}
+                    theme={paperInputTheme}
+                    outlineColor={theme.colors.outlineVariant}
+                    activeOutlineColor={theme.colors.primary}
+                    textColor={theme.colors.onSurface}
                 />
 
-                {/* RECURSOS */}
-                <Text style={[styles.label, { color: theme.colors.onSurface }]}>Recursos Presentes <Text style={styles.required}>*</Text></Text>
                 <TextInput
-                    style={[styles.input, { backgroundColor: theme.colors.surfaceVariant, color: theme.colors.onSurface }]}
+                    mode="outlined"
+                    label="Recursos Presentes *"
                     placeholder="Ex: Rampas, Placas em Braille..."
-                    placeholderTextColor={theme.colors.onSurfaceVariant}
                     value={recursos}
                     onChangeText={setRecursos}
+                    style={styles.input}
+                    theme={paperInputTheme}
+                    outlineColor={theme.colors.outlineVariant}
+                    activeOutlineColor={theme.colors.primary}
+                    textColor={theme.colors.onSurface}
                 />
 
-                {/* FOTO */}
-                <Text style={[styles.label, { color: theme.colors.onSurface }]}>Adicionar Foto (Opcional)</Text>
+                <Text style={[styles.photoLabel, { color: theme.colors.onSurface }]}>Adicionar Foto (Opcional)</Text>
                 <View style={styles.imageSection}>
                     {image ? (
                         <View style={styles.previewContainer}>
@@ -208,37 +227,41 @@ export function AddPlaceForm({ initialCoordinate, initialData }) {
                         </View>
                     ) : (
                         <TouchableOpacity
-                            style={[styles.photoPicker, { backgroundColor: theme.colors.surfaceVariant, borderStyle: 'dashed', borderColor: theme.colors.outlineVariant }]}
+                            style={[styles.photoPicker, { backgroundColor: theme.colors.surfaceVariant, borderColor: theme.colors.outlineVariant }]}
                             onPress={pickImage}
                         >
                             <Feather name="camera" size={24} color={theme.colors.onSurfaceVariant} />
-                            <Text style={{ color: theme.colors.onSurfaceVariant, marginTop: 5 }}>Anexar Foto</Text>
+                            <Text style={{ color: theme.colors.onSurfaceVariant, marginTop: 5, fontWeight: 'bold' }}>Anexar Foto</Text>
                         </TouchableOpacity>
                     )}
                 </View>
 
-                {/* DESCRIÇÃO */}
-                <Text style={[styles.label, { color: theme.colors.onSurface }]}>Descrição</Text>
                 <TextInput
-                    style={[styles.input, styles.textArea, { backgroundColor: theme.colors.surfaceVariant, color: theme.colors.onSurface }]}
+                    mode="outlined"
+                    label="Descrição"
                     placeholder="Detalhes adicionais..."
-                    placeholderTextColor={theme.colors.onSurfaceVariant}
                     multiline
                     numberOfLines={4}
                     value={descricao}
                     onChangeText={setDescricao}
+                    style={styles.input}
+                    theme={paperInputTheme}
+                    outlineColor={theme.colors.outlineVariant}
+                    activeOutlineColor={theme.colors.primary}
+                    textColor={theme.colors.onSurface}
                 />
 
-                {/* BOTÃO SALVAR (ESTILO PÍLULA) */}
-                <TouchableOpacity
-                    style={[styles.saveButton, { backgroundColor: theme.colors.primary }]}
+                <Button
+                    mode="contained"
                     onPress={handleSave}
-                    activeOpacity={0.8}
+                    buttonColor={theme.colors.primary}
+                    textColor={theme.colors.onPrimary}
+                    style={styles.saveButton}
+                    contentStyle={styles.saveButtonContent}
+                    labelStyle={styles.saveButtonText}
                 >
-                    <Text style={[styles.saveButtonText, { color: theme.colors.onPrimary }]}>
-                        {initialData ? "Enviar solicitação de edição" : "Enviar solicitação de adição"}
-                    </Text>
-                </TouchableOpacity>
+                    {initialData ? "Enviar solicitação de edição" : "Enviar solicitação de adição"}
+                </Button>
 
             </View>
         </View>
@@ -260,57 +283,38 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.05,
         shadowOffset: { width: 0, height: 2 },
     },
-    label: {
+    input: {
+        marginBottom: 16, 
+    },
+    chipLabel: {
         fontSize: 14,
         fontWeight: 'bold',
-        marginBottom: 8,
-        marginTop: 15,
-    },
-    required: {
-        color: '#BA1A1A',
-    },
-    input: {
-        borderRadius: 12,
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        fontSize: 16,
-        borderWidth: 0,
-    },
-    inputWithIcon: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    loader: {
-        position: 'absolute',
-        right: 15,
+        marginBottom: 10,
+        marginLeft: 4,
     },
     chipContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         gap: 8,
-        marginBottom: 5,
+        marginBottom: 20,
     },
     chip: {
-        paddingVertical: 10,
-        paddingHorizontal: 16,
-        borderRadius: 100,
-        borderWidth: 1,
+        borderRadius: 8, 
     },
-    chipText: {
-        fontSize: 13,
+    photoLabel: {
+        fontSize: 14,
         fontWeight: 'bold',
-    },
-    textArea: {
-        height: 100,
-        textAlignVertical: 'top',
+        marginBottom: 8,
+        marginLeft: 4,
     },
     imageSection: {
-        marginTop: 5,
+        marginBottom: 20,
     },
     photoPicker: {
         height: 120,
-        borderRadius: 16,
-        borderWidth: 1,
+        borderRadius: 12,
+        borderWidth: 1.5,
+        borderStyle: 'dashed',
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -335,11 +339,11 @@ const styles = StyleSheet.create({
         borderRadius: 20,
     },
     saveButton: {
-        borderRadius: 100,
-        paddingVertical: 16,
-        alignItems: 'center',
-        marginTop: 30,
-        elevation: 4,
+        marginTop: 10,
+        borderRadius: 100, 
+    },
+    saveButtonContent: {
+        paddingVertical: 8,
     },
     saveButtonText: {
         fontSize: 16,
