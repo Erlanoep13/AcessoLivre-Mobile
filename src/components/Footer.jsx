@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Button } from 'react-native-paper'; 
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -23,19 +24,24 @@ export function Footer() {
 
         {/* Link do Instagram */}
         <TouchableOpacity style={styles.link} onPress={openInstagram}>
-          <Feather name="instagram" size={18} color={theme.colors.primary} />
+          <MaterialCommunityIcons 
+            name="instagram" 
+            size={20} 
+            color={theme.colors.primary} 
+          />
           <Text style={[styles.linkText, { color: theme.colors.primary }]}>@acessolivreads</Text>
         </TouchableOpacity>
 
-        {/* Link Sobre Nós */}
-        <TouchableOpacity
-          style={styles.aboutButton}
+        {/* 2. Botão Sobre Nós Estilizado com React Native Paper */}
+        <Button
+          mode="outlined"
+          icon="information-outline" // Ícone do Material Design embutido no botão
           onPress={() => navigation.navigate('AboutPage')}
+          textColor={theme.colors.primary}
+          style={[styles.aboutButton, { borderColor: theme.colors.outlineVariant }]}
         >
-          <Text style={[styles.aboutText, { color: theme.colors.onSurfaceVariant }]}>
-            Conheça o projeto (Sobre Nós)
-          </Text>
-        </TouchableOpacity>
+          Conheça o projeto (Sobre Nós)
+        </Button>
 
         <View style={[styles.divider, { backgroundColor: theme.colors.outlineVariant, opacity: 0.3 }]} />
 
@@ -53,7 +59,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     width: '100%',
     marginTop: 20,
-    },
+  },
   content: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -71,7 +77,7 @@ const styles = StyleSheet.create({
   link: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: 20, // Aumentei um pouco o espaçamento para o novo botão
     gap: 8,
   },
   linkText: {
@@ -80,11 +86,7 @@ const styles = StyleSheet.create({
   },
   aboutButton: {
     marginBottom: 20,
-    paddingVertical: 5,
-  },
-  aboutText: {
-    fontSize: 14,
-    textDecorationLine: 'underline',
+    borderRadius: 100, // Deixa o botão em formato de pílula
   },
   divider: {
     height: 1,

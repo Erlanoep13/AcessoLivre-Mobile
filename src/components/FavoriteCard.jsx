@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import { View, Text, StyleSheet } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Button } from 'react-native-paper';
 import { useTheme } from '../contexts/ThemeContext';
 
 // Dados Mockados para exibição
@@ -46,18 +47,19 @@ export function FavoriteCard() {
 
           <View style={[styles.divider, { backgroundColor: theme.colors.outlineVariant, opacity: 0.3 }]} />
 
-          {/* Ação de Remover */}
+          {/* 3. Ação de Remover com o Button da Paper */}
           <View style={styles.actionsContainer}>
-            <TouchableOpacity
+            <Button
+              mode="contained"
+              icon="heart-minus" // Ícone do Material que faz muito mais sentido para "remover"
               onPress={() => handleRemove(item.id)}
-              style={[styles.favoriteButton, { backgroundColor: theme.colors.errorContainer }]}
-              activeOpacity={0.8}
+              buttonColor={theme.colors.errorContainer}
+              textColor={theme.colors.onErrorContainer}
+              style={styles.favoriteButton}
+              contentStyle={{ paddingHorizontal: 4 }}
             >
-              <Feather name="heart" size={18} color={theme.colors.error} />
-              <Text style={[styles.favoriteText, { color: theme.colors.onErrorContainer }]}>
-                Remover dos Favoritos
-              </Text>
-            </TouchableOpacity>
+              Remover dos Favoritos
+            </Button>
           </View>
 
         </View>
@@ -108,15 +110,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   favoriteButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 100,
-  },
-  favoriteText: {
-    marginLeft: 8,
-    fontWeight: 'bold',
-    fontSize: 13,
+    borderRadius: 100, // Formato de pílula clássico do Material
   }
 });

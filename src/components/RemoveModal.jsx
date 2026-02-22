@@ -1,90 +1,63 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Modal,
-  TouchableOpacity,
-  TextInput,
-  KeyboardAvoidingView,
-  Platform
-} from 'react-native';
-import { useTheme } from '../contexts/ThemeContext';
+import { View, Text, Modal, StyleSheet, Alert } from 'react-native';
+import { TextInput, Button } from 'react-native-paper';
 
 export function RemoveModal({ visible, onClose, onConfirm }) {
-  const { theme } = useTheme();
-  const [motivo, setMotivo] = useState('');
+  const [reason, setReason] = useState('');
 
   const handleConfirm = () => {
-    if (motivo.trim() === '') {
-      return; // Evita confirmação sem motivo
+    if (!reason.trim()) {
+      Alert.alert("Atenção", "Por favor, informe um motivo para a remoção.");
+      return;
     }
-    onConfirm(motivo);
-    setMotivo('');
+    onConfirm(reason);
+    setReason(''); 
   };
 
   return (
     <Modal
-      animationType="fade"
       transparent={true}
       visible={visible}
+      animationType="fade"
       onRequestClose={onClose}
     >
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.overlay}
-      >
-        <View style={[styles.modalView, { backgroundColor: theme.colors.surface }]}>
-
-          <Text style={[styles.title, { color: theme.colors.error }]}>
-            Solicitar Remoção
-          </Text>
-
-          <Text style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}>
-            Por que este local deve ser removido do mapa?
-          </Text>
+      <View style={styles.overlay}>
+        <View style={styles.modalContainer}>
+          <Text style={styles.title}>Remover Local</Text>
+          <Text style={styles.subtitle}>Por qual motivo este local deve ser removido?</Text>
 
           <TextInput
-            style={[styles.input, {
-              backgroundColor: theme.colors.surfaceVariant,
-              color: theme.colors.onSurface,
-              borderColor: theme.colors.outlineVariant
-            }]}
-            placeholder="Ex: O local fechou permanentemente..."
-            placeholderTextColor={theme.colors.onSurfaceVariant}
+            mode="outlined"
+            label="Motivo da remoção"
+            placeholder="Ex: Local fechado..."
             multiline
-            numberOfLines={4}
-            value={motivo}
-            onChangeText={setMotivo}
+            numberOfLines={3}
+            value={reason}
+            onChangeText={setReason}
+            activeOutlineColor="#1e4e28" 
+            outlineColor="#ddd"
+            style={styles.input}
           />
 
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={[styles.button, { backgroundColor: theme.colors.surfaceContainerHigh }]}
+          <View style={styles.actions}>
+            <Button 
+              mode="text" 
+              textColor="#555" 
               onPress={onClose}
             >
-              <Text style={[styles.buttonText, { color: theme.colors.onSurface }]}>
-                Cancelar
-              </Text>
-            </TouchableOpacity>
+              Cancelar
+            </Button>
 
-            <TouchableOpacity
-              style={[
-                styles.button,
-                { backgroundColor: theme.colors.error },
-                motivo.trim() === '' && { opacity: 0.5 }
-              ]}
+            <Button 
+              mode="contained" 
+              buttonColor="#d32f2f" 
               onPress={handleConfirm}
-              disabled={motivo.trim() === ''}
             >
-              <Text style={[styles.buttonText, { color: theme.colors.onError }]}>
-                Confirmar
-              </Text>
-            </TouchableOpacity>
+              Enviar Pedido
+            </Button>
           </View>
-
         </View>
-      </KeyboardAvoidingView>
+      </View>
     </Modal>
   );
 }
@@ -92,58 +65,37 @@ export function RemoveModal({ visible, onClose, onConfirm }) {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
   },
-  modalView: {
+  modalContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 20,
     width: '100%',
-    borderRadius: 28,
-    padding: 24,
-    alignItems: 'center',
-    elevation: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
+    maxWidth: 350,
+    elevation: 5,
   },
   title: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
+    color: '#333',
+    marginBottom: 5,
   },
   subtitle: {
     fontSize: 14,
-    textAlign: 'center',
-    marginBottom: 20,
-    lineHeight: 20,
+    color: '#666',
+    marginBottom: 15,
   },
   input: {
-    width: '100%',
-    height: 100,
-    borderRadius: 12,
-    padding: 12,
-    fontSize: 16,
-    textAlignVertical: 'top',
-    marginBottom: 25,
-    borderWidth: 1,
+    marginBottom: 20,
+    backgroundColor: '#fff',
   },
-  buttonContainer: {
+  actions: {
     flexDirection: 'row',
-    gap: 12,
-    width: '100%',
-  },
-  button: {
-    flex: 1,
-    height: 48,
-    borderRadius: 100, // Formato pílula M3
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 2,
-  },
-  buttonText: {
-    fontWeight: 'bold',
-    fontSize: 14,
+    justifyContent: 'flex-end',
+    gap: 8,
   },
 });

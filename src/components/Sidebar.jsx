@@ -10,10 +10,10 @@ import {
   ScrollView,
   Switch
 } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useUser } from '../contexts/UserContext';
-import { useTheme } from '../contexts/ThemeContext'; // Importação do contexto de tema
+import { useTheme } from '../contexts/ThemeContext';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -23,7 +23,6 @@ export function Sidebar({ visible, onClose }) {
   const { username, signOut } = useUser();
   const { theme, isDark, toggleTheme } = useTheme();
 
-  // Verifica se o usuário logado tem privilégios de administrador
   const isAdmin = username && username.toLowerCase() === 'admin';
 
   useEffect(() => {
@@ -53,20 +52,26 @@ export function Sidebar({ visible, onClose }) {
           { transform: [{ translateX: slideAnim }], backgroundColor: theme.colors.surface }
         ]}>
 
-          {/* Cabeçalho do Menu */}
+          {/* Cabeçalho */}
           <View style={styles.header}>
             <Text style={[styles.title, { color: theme.colors.primary }]}>AcessoLivre</Text>
             <TouchableOpacity onPress={onClose}>
-              <Feather name="x" size={24} color={theme.colors.onSurface} />
+              {/* Ícone de fechar do Material */}
+              <MaterialIcons name="close" size={28} color={theme.colors.onSurface} />
             </TouchableOpacity>
           </View>
 
           <ScrollView showsVerticalScrollIndicator={false}>
 
-            {/* Seletor de Tema (Modo Escuro) */}
+            {/* Seletor de Tema */}
             <View style={styles.themeToggle}>
               <View style={styles.row}>
-                <Feather name={isDark ? "moon" : "sun"} size={20} color={theme.colors.onSurface} />
+                {/* Ícones de Sol/Lua do Material */}
+                <MaterialIcons 
+                  name={isDark ? "brightness-2" : "wb-sunny"} 
+                  size={22} 
+                  color={theme.colors.onSurface} 
+                />
                 <Text style={[styles.menuText, { color: theme.colors.onSurface, marginLeft: 15 }]}>
                   Modo Escuro
                 </Text>
@@ -81,18 +86,18 @@ export function Sidebar({ visible, onClose }) {
 
             <View style={[styles.divider, { backgroundColor: theme.colors.outlineVariant }]} />
 
-            {/* Links de Navegação Comuns */}
+            {/* Navegação Comum */}
             <TouchableOpacity style={styles.menuItem} onPress={() => navigateTo('MapPage')}>
-              <Feather name="search" size={20} color={theme.colors.onSurface} style={styles.icon} />
+              <MaterialIcons name="search" size={24} color={theme.colors.onSurface} style={styles.icon} />
               <Text style={[styles.menuText, { color: theme.colors.onSurface }]}>Pesquisar</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.menuItem} onPress={() => navigateTo('Favorites')}>
-              <Feather name="star" size={20} color={theme.colors.onSurface} style={styles.icon} />
+              <MaterialIcons name="star" size={24} color={theme.colors.onSurface} style={styles.icon} />
               <Text style={[styles.menuText, { color: theme.colors.onSurface }]}>Favoritos</Text>
             </TouchableOpacity>
 
-            {/* Seção de Administração - Agrupada em Container */}
+            {/* Administração */}
             {isAdmin && (
               <View style={[
                 styles.adminCard,
@@ -101,22 +106,22 @@ export function Sidebar({ visible, onClose }) {
                 <Text style={[styles.adminTitle, { color: theme.colors.primary }]}>ADMINISTRAÇÃO</Text>
 
                 <TouchableOpacity style={styles.adminItem} onPress={() => navigateTo('Admin')}>
-                  <Feather name="grid" size={18} color={theme.colors.primary} style={styles.icon} />
+                  <MaterialIcons name="dashboard" size={22} color={theme.colors.primary} style={styles.icon} />
                   <Text style={[styles.menuText, { color: theme.colors.primary }]}>Painel do Admin</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.adminItem} onPress={() => navigateTo('AddRequest')}>
-                  <Feather name="plus-square" size={18} color={theme.colors.primary} style={styles.icon} />
+                  <MaterialIcons name="add-box" size={22} color={theme.colors.primary} style={styles.icon} />
                   <Text style={[styles.menuText, { color: theme.colors.primary }]}>Solic. de Adição</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.adminItem} onPress={() => navigateTo('EditRequest')}>
-                  <Feather name="edit" size={18} color={theme.colors.primary} style={styles.icon} />
+                  <MaterialIcons name="edit" size={22} color={theme.colors.primary} style={styles.icon} />
                   <Text style={[styles.menuText, { color: theme.colors.primary }]}>Solic. de Edição</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.adminItem} onPress={() => navigateTo('RemoveRequest')}>
-                  <Feather name="trash-2" size={18} color={theme.colors.primary} style={styles.icon} />
+                  <MaterialIcons name="delete" size={22} color={theme.colors.primary} style={styles.icon} />
                   <Text style={[styles.menuText, { color: theme.colors.primary }]}>Solic. de Remoção</Text>
                 </TouchableOpacity>
               </View>
@@ -127,14 +132,14 @@ export function Sidebar({ visible, onClose }) {
             {/* Ações de Usuário */}
             {username ? (
               <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
-                <Feather name="log-out" size={20} color={theme.colors.error} style={styles.icon} />
+                <MaterialIcons name="logout" size={24} color={theme.colors.error} style={styles.icon} />
                 <Text style={[styles.menuText, { color: theme.colors.error, fontWeight: 'bold' }]}>
                   Sair ({username})
                 </Text>
               </TouchableOpacity>
             ) : (
               <TouchableOpacity style={styles.menuItem} onPress={() => navigateTo('Login')}>
-                <Feather name="user" size={20} color={theme.colors.onSurface} style={styles.icon} />
+                <MaterialIcons name="person" size={24} color={theme.colors.onSurface} style={styles.icon} />
                 <Text style={[styles.menuText, { color: theme.colors.onSurface }]}>Login</Text>
               </TouchableOpacity>
             )}

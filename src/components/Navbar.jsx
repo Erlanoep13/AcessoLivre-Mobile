@@ -1,36 +1,37 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Platform, StatusBar } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { Sidebar } from './Sidebar';
-import { useTheme } from '../contexts/ThemeContext'; // Importação do contexto de tema
+import { useTheme } from '../contexts/ThemeContext';
 
-// Define a altura da StatusBar para evitar sobreposição no Android e iOS
 const STATUSBAR_HEIGHT = Platform.OS === 'android' ? (StatusBar.currentHeight || 24) : 44;
 
 export function Navbar() {
   const [menuVisible, setMenuVisible] = useState(false);
-  const { theme } = useTheme(); // Acessando os tokens de cor do M3
+  const { theme } = useTheme();
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.surfaceContainerHighest }]}>
-      {/* Sidebar integrada à Navbar */}
       <Sidebar
         visible={menuVisible}
         onClose={() => setMenuVisible(false)}
       />
 
-      {/* Botão de Menu Hambúrguer */}
+      {/* 2. Substituindo o texto ☰ pelo ícone Material */}
       <TouchableOpacity
         activeOpacity={0.7}
         style={styles.menuButton}
         onPress={() => setMenuVisible(true)}
       >
-        <Text style={[styles.menuText, { color: theme.colors.onSurface }]}>☰</Text>
+        <MaterialIcons 
+          name="menu" 
+          size={28} 
+          color={theme.colors.onSurface} 
+        />
       </TouchableOpacity>
 
-      {/* Título Central */}
       <Text style={[styles.title, { color: theme.colors.onSurface }]}>AcessoLivre</Text>
 
-      {/* Logo da aplicação */}
       <TouchableOpacity activeOpacity={0.7}>
         <Image
           source={require('../../assets/AcessoLivre.png')}
@@ -58,10 +59,9 @@ const styles = StyleSheet.create({
   },
   menuButton: {
     padding: 4,
-  },
-  menuText: {
-    fontSize: 28,
-    fontWeight: 'bold',
+    // Centraliza o ícone caso o botão tenha uma área de toque maior
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   title: {
     fontSize: 20,

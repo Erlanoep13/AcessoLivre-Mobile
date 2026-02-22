@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Alert } from 'react-native';
+// 1. Importando os componentes do Material Design
+import { TextInput, Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { useUser } from '../contexts/UserContext';
 import { useTheme } from '../contexts/ThemeContext';
-import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
@@ -16,7 +17,7 @@ export function LoginForm() {
 
   const navigation = useNavigation();
   const { setUsername } = useUser();
-  const { theme, isDark } = useTheme();
+  const { theme } = useTheme();
 
   async function handleLogin() {
     if (nome.trim() === '' || chaveAcesso.trim() === '') {
@@ -27,7 +28,6 @@ export function LoginForm() {
     setLoading(true);
 
     try {
-      // PASSO 1: Busca o e-mail associado ao username no Firestore
       const userDoc = await firestore().collection('usernames').doc(nome.trim()).get();
 
       if (!userDoc.exists) {
@@ -45,10 +45,8 @@ export function LoginForm() {
 
       const emailRecuperado = userData.email;
 
-      // PASSO 2: Autenticação oficial via Firebase Auth
       await auth().signInWithEmailAndPassword(emailRecuperado, chaveAcesso);
 
-      // PASSO 3: Persistência Local (AsyncStorage)
       setUsername(nome);
       const dadosUsuario = {
         username: nome,
@@ -75,65 +73,65 @@ export function LoginForm() {
 
       <View style={[styles.card, { backgroundColor: theme.colors.surfaceContainerLow }]}>
 
-        <Text style={[styles.label, { color: theme.colors.onSurface }]}>Nome de Usuário</Text>
+        {/* 2. Input de Usuário da Paper */}
         <TextInput
-          style={[styles.input, {
-            backgroundColor: theme.colors.surfaceVariant,
-            color: theme.colors.onSurface,
-            borderColor: theme.colors.outlineVariant
-          }]}
+          mode="outlined"
+          label="Nome de Usuário"
           placeholder="Ex: Erlano"
-          placeholderTextColor={theme.colors.onSurfaceVariant}
           value={nome}
           onChangeText={setNome}
           autoCapitalize="none"
+          textColor={theme.colors.onSurface}
+          outlineColor={theme.colors.outlineVariant}
+          activeOutlineColor={theme.colors.primary}
+          style={[styles.input, { backgroundColor: theme.colors.surfaceVariant }]}
         />
 
-        <Text style={[styles.label, { color: theme.colors.onSurface }]}>Sua Senha</Text>
-        <View style={[styles.passwordContainer, {
-          backgroundColor: theme.colors.surfaceVariant,
-          borderColor: theme.colors.outlineVariant
-        }]}>
-          <TextInput
-            style={[styles.inputPassword, { color: theme.colors.onSurface }]}
-            placeholder="Sua senha"
-            placeholderTextColor={theme.colors.onSurfaceVariant}
-            secureTextEntry={!mostrarSenha}
-            value={chaveAcesso}
-            onChangeText={setChaveAcesso}
-          />
-
-          <TouchableOpacity onPress={() => setMostrarSenha(!mostrarSenha)} style={styles.iconButton}>
-            <Ionicons
-              name={mostrarSenha ? "eye" : "eye-off"}
-              size={22}
+        {/* 3. Input de Senha da Paper (com ícone embutido) */}
+        <TextInput
+          mode="outlined"
+          label="Sua Senha"
+          placeholder="Sua senha"
+          secureTextEntry={!mostrarSenha}
+          value={chaveAcesso}
+          onChangeText={setChaveAcesso}
+          textColor={theme.colors.onSurface}
+          outlineColor={theme.colors.outlineVariant}
+          activeOutlineColor={theme.colors.primary}
+          style={[styles.input, { backgroundColor: theme.colors.surfaceVariant, marginBottom: 30 }]}
+          right={
+            <TextInput.Icon 
+              icon={mostrarSenha ? "eye-off" : "eye"} 
+              onPress={() => setMostrarSenha(!mostrarSenha)} 
               color={theme.colors.onSurfaceVariant}
             />
-          </TouchableOpacity>
-        </View>
+          }
+        />
 
-        <TouchableOpacity
-          style={[styles.loginButton, { backgroundColor: theme.colors.primary }, loading && { opacity: 0.7 }]}
+        {/* 4. Botão de Login da Paper (já gerencia o loading) */}
+        <Button
+          mode="contained"
           onPress={handleLogin}
+          loading={loading}
           disabled={loading}
+          buttonColor={theme.colors.primary}
+          textColor={theme.colors.onPrimary}
+          style={styles.loginButton}
+          contentStyle={{ paddingVertical: 6 }}
         >
-          {loading ? (
-            <ActivityIndicator color={theme.colors.onPrimary} />
-          ) : (
-            <Text style={[styles.loginButtonText, { color: theme.colors.onPrimary }]}>Entrar</Text>
-          )}
-        </TouchableOpacity>
+          Entrar
+        </Button>
       </View>
 
-      <TouchableOpacity
-        style={styles.createAccountContainer}
+      {/* 5. Botão de Criar Conta */}
+      <Button
+        mode="text"
+        textColor={theme.colors.primary}
         onPress={() => navigation.navigate('Register')}
+        style={styles.createAccountContainer}
       >
-        <Text>Não tem uma conta? </Text>
-        <Text style={[styles.createAccountText, { color: theme.colors.primary }]}>
-          Criar conta
-        </Text>
-      </TouchableOpacity>
+        Não tem uma conta? Criar conta
+      </Button>
     </View>
   );
 }
@@ -162,52 +160,14 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
   },
-  label: {
-    fontSize: 14,
-    marginBottom: 8,
-    fontWeight: 'bold'
-  },
   input: {
-    borderRadius: 12,
-    paddingHorizontal: 15,
-    paddingVertical: 12,
-    fontSize: 16,
-    marginBottom: 20,
-    borderWidth: 1,
-  },
-  passwordContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 12,
-    marginBottom: 30,
-    borderWidth: 1,
-  },
-  inputPassword: {
-    flex: 1,
-    paddingHorizontal: 15,
-    paddingVertical: 12,
-    fontSize: 16
-  },
-  iconButton: {
-    padding: 10
+    marginBottom: 15,
   },
   loginButton: {
-    borderRadius: 100, // Botão pílula M3
-    paddingVertical: 14,
-    alignItems: 'center',
+    borderRadius: 100, // Padrão de pílula
     marginTop: 10,
-    elevation: 2
-  },
-  loginButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold'
   },
   createAccountContainer: {
     marginTop: 25
-  },
-  createAccountText: {
-    textDecorationLine: 'underline',
-    fontSize: 15,
-    fontWeight: 'bold'
   },
 });
