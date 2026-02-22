@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, StyleSheet, Text } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { useTheme } from '../contexts/ThemeContext'; // Importação do tema global
+import { useTheme } from '../contexts/ThemeContext';
 
 export function SearchBar() {
-  const { theme, isDark } = useTheme(); // Acessando as cores do Material Theme
+  const { theme, isDark } = useTheme();
   const [texto, setTexto] = useState('');
   const [mostrarResultados, setMostrarResultados] = useState(false);
 
@@ -74,7 +74,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     position: 'relative',
     zIndex: 10,
-    paddingHorizontal: 16,
   },
   inputContainer: {
     flexDirection: 'row',

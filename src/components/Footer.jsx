@@ -1,20 +1,29 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Button } from 'react-native-paper'; 
+import { Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context'; // Hook para área segura
 import { useTheme } from '../contexts/ThemeContext';
 
 export function Footer() {
   const navigation = useNavigation();
   const { theme } = useTheme();
+  const insets = useSafeAreaInsets(); // Obtendo as margens do sistema
 
   const openInstagram = () => {
     Linking.openURL('https://instagram.com/acessolivreads');
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.surfaceVariant }]}>
+    <View style={[
+      styles.container,
+      {
+        backgroundColor: theme.colors.surfaceVariant,
+        // Soma o padding padrão com a margem do sistema (se existir)
+        paddingBottom: 30 + insets.bottom
+      }
+    ]}>
       <View style={styles.content}>
 
         <Text style={[styles.title, { color: theme.colors.onSurface }]}>Acesso Livre</Text>
@@ -24,18 +33,17 @@ export function Footer() {
 
         {/* Link do Instagram */}
         <TouchableOpacity style={styles.link} onPress={openInstagram}>
-          <MaterialCommunityIcons 
-            name="instagram" 
-            size={20} 
-            color={theme.colors.primary} 
+          <MaterialCommunityIcons
+            name="instagram"
+            size={20}
+            color={theme.colors.primary}
           />
           <Text style={[styles.linkText, { color: theme.colors.primary }]}>@acessolivreads</Text>
         </TouchableOpacity>
 
-        {/* 2. Botão Sobre Nós Estilizado com React Native Paper */}
         <Button
           mode="outlined"
-          icon="information-outline" // Ícone do Material Design embutido no botão
+          icon="information-outline"
           onPress={() => navigation.navigate('AboutPage')}
           textColor={theme.colors.primary}
           style={[styles.aboutButton, { borderColor: theme.colors.outlineVariant }]}
@@ -55,7 +63,7 @@ export function Footer() {
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 30,
+    paddingTop: 30,
     paddingHorizontal: 16,
     width: '100%',
     marginTop: 20,
@@ -77,7 +85,7 @@ const styles = StyleSheet.create({
   link: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20, // Aumentei um pouco o espaçamento para o novo botão
+    marginBottom: 20,
     gap: 8,
   },
   linkText: {
@@ -86,7 +94,7 @@ const styles = StyleSheet.create({
   },
   aboutButton: {
     marginBottom: 20,
-    borderRadius: 100, // Deixa o botão em formato de pílula
+    borderRadius: 100,
   },
   divider: {
     height: 1,

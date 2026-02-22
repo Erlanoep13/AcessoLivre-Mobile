@@ -1,8 +1,19 @@
 import React, { useState } from 'react';
-import { View, Text, Modal, StyleSheet, Alert } from 'react-native';
-import { TextInput, Button } from 'react-native-paper';
+import {
+  View,
+  Text,
+  Modal,
+  StyleSheet,
+  Alert,
+  TextInput,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform
+} from 'react-native';
+import { useTheme } from '../contexts/ThemeContext';
 
 export function RemoveModal({ visible, onClose, onConfirm }) {
+  const { theme } = useTheme();
   const [reason, setReason] = useState('');
 
   const handleConfirm = () => {
@@ -11,7 +22,7 @@ export function RemoveModal({ visible, onClose, onConfirm }) {
       return;
     }
     onConfirm(reason);
-    setReason(''); 
+    setReason('');
   };
 
   return (
@@ -21,43 +32,47 @@ export function RemoveModal({ visible, onClose, onConfirm }) {
       animationType="fade"
       onRequestClose={onClose}
     >
-      <View style={styles.overlay}>
-        <View style={styles.modalContainer}>
-          <Text style={styles.title}>Remover Local</Text>
-          <Text style={styles.subtitle}>Por qual motivo este local deve ser removido?</Text>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.overlay}
+      >
+        <View style={[styles.modalContainer, { backgroundColor: theme.colors.surface }]}>
+          <Text style={[styles.title, { color: theme.colors.error }]}>Remover Local</Text>
+          <Text style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}>
+            Por qual motivo este local deve ser removido?
+          </Text>
 
           <TextInput
-            mode="outlined"
-            label="Motivo da remoção"
-            placeholder="Ex: Local fechado..."
+            style={[styles.input, {
+              backgroundColor: theme.colors.surfaceVariant,
+              color: theme.colors.onSurface,
+              borderColor: theme.colors.outlineVariant
+            }]}
+            placeholder="Ex: Local fechado permanentemente..."
+            placeholderTextColor={theme.colors.onSurfaceVariant}
             multiline
             numberOfLines={3}
             value={reason}
             onChangeText={setReason}
-            activeOutlineColor="#1e4e28" 
-            outlineColor="#ddd"
-            style={styles.input}
           />
 
           <View style={styles.actions}>
-            <Button 
-              mode="text" 
-              textColor="#555" 
+            <TouchableOpacity
+              style={[styles.button, { backgroundColor: theme.colors.surfaceContainerHigh }]}
               onPress={onClose}
             >
-              Cancelar
-            </Button>
+              <Text style={{ color: theme.colors.onSurface, fontWeight: '600' }}>Cancelar</Text>
+            </TouchableOpacity>
 
-            <Button 
-              mode="contained" 
-              buttonColor="#d32f2f" 
+            <TouchableOpacity
+              style={[styles.button, { backgroundColor: theme.colors.error }]}
               onPress={handleConfirm}
             >
-              Enviar Pedido
-            </Button>
+              <Text style={{ color: theme.colors.onError, fontWeight: 'bold' }}>Enviar Pedido</Text>
+            </TouchableOpacity>
           </View>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
@@ -65,37 +80,46 @@ export function RemoveModal({ visible, onClose, onConfirm }) {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0,0,0,0.6)',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
   },
   modalContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 20,
+    borderRadius: 28,
+    padding: 24,
     width: '100%',
-    maxWidth: 350,
-    elevation: 5,
+    maxWidth: 400,
+    elevation: 10,
   },
   title: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 5,
+    marginBottom: 8,
   },
   subtitle: {
     fontSize: 14,
-    color: '#666',
-    marginBottom: 15,
+    marginBottom: 20,
+    lineHeight: 20,
   },
   input: {
-    marginBottom: 20,
-    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 12,
+    fontSize: 16,
+    textAlignVertical: 'top',
+    marginBottom: 24,
+    borderWidth: 1,
   },
   actions: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    gap: 8,
+    gap: 12,
+  },
+  button: {
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

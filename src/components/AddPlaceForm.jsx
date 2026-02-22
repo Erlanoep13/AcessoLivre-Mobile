@@ -12,7 +12,6 @@ import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../contexts/ThemeContext';
-// Importando os componentes do Material Design 3
 import { TextInput, Button, Chip, Text } from 'react-native-paper';
 
 export function AddPlaceForm({ initialCoordinate, initialData }) {
@@ -35,18 +34,15 @@ export function AddPlaceForm({ initialCoordinate, initialData }) {
         { label: 'Sugestão', value: 'Sugestão de melhoria' }
     ];
 
-    // 1. Objeto criado para forçar o input a respeitar o Modo Escuro da sua equipe
     const paperInputTheme = {
         colors: {
             background: theme.colors.surfaceVariant,
             primary: theme.colors.primary,
             onSurfaceVariant: theme.colors.onSurfaceVariant,
             onSurface: theme.colors.onSurface,
-            text: theme.colors.onSurface,
         }
     };
 
-    // Efeito para EDIÇÃO
     useEffect(() => {
         if (initialData) {
             setNome(initialData.nome || '');
@@ -59,7 +55,6 @@ export function AddPlaceForm({ initialCoordinate, initialData }) {
         }
     }, [initialData]);
 
-    // Efeito para ADIÇÃO (Geocoding Reverso)
     useEffect(() => {
         if (initialCoordinate && !initialData) {
             transformCoordsToAddress(initialCoordinate);
@@ -70,10 +65,7 @@ export function AddPlaceForm({ initialCoordinate, initialData }) {
         setLoadingCoords(true);
         try {
             let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
-                Alert.alert('Permissão negada', 'Não conseguimos obter o endereço sem acesso à localização.');
-                return;
-            }
+            if (status !== 'granted') return;
 
             let addressResponse = await Location.reverseGeocodeAsync({
                 latitude: coords.latitude,
@@ -82,28 +74,17 @@ export function AddPlaceForm({ initialCoordinate, initialData }) {
 
             if (addressResponse.length > 0) {
                 const item = addressResponse[0];
-                const street = item.street || item.name || '';
-                const district = item.district || '';
-                const city = item.city || '';
-                const number = item.streetNumber || '';
-
-                const fullAddress = `${street}${number ? ', ' + number : ''}${district ? ' - ' + district : ''}${city ? ', ' + city : ''}`;
+                const fullAddress = `${item.street || ''}${item.streetNumber ? ', ' + item.streetNumber : ''} - ${item.district || item.subregion || ''}`;
                 setLocalizacao(fullAddress);
             }
         } catch (error) {
-            setLocalizacao(`${coords.latitude.toFixed(4)}, ${coords.longitude.toFixed(4)}`);
+            setLocalizacao(`${coords.latitude.toFixed(5)}, ${coords.longitude.toFixed(5)}`);
         } finally {
             setLoadingCoords(false);
         }
     };
 
     const pickImage = async () => {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== 'granted') {
-            Alert.alert('Permissão negada', 'Precisamos de acesso à sua galeria!');
-            return;
-        }
-
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
@@ -117,53 +98,51 @@ export function AddPlaceForm({ initialCoordinate, initialData }) {
 
     function handleSave() {
         const camposFaltantes = [];
-        if (!nome.trim()) camposFaltantes.push("Nome do Local");
+        if (!nome.trim()) camposFaltantes.push("Nome");
         if (!localizacao.trim()) camposFaltantes.push("Localização");
-        if (!recursos.trim()) camposFaltantes.push("Recursos de Acessibilidade");
+        if (!recursos.trim()) camposFaltantes.push("Recursos");
 
         if (camposFaltantes.length > 0) {
-            Alert.alert("Atenção", `Preencha os campos obrigatórios:\n\n• ${camposFaltantes.join("\n• ")}`);
+            Alert.alert(
+                "Atenção",
+                `Os seguintes campos são obrigatórios:\n\n• ${camposFaltantes.join('\n• ')}`
+            );
             return;
         }
 
-        const mensagem = initialData
-            ? "Pedido de edição enviado com sucesso!"
-            : "Pedido de adição enviado para o administrador.";
-
-        Alert.alert("Sucesso", mensagem, [
-            { text: "OK", onPress: () => navigation.navigate('MapPage') }
-        ]);
+        const msg = initialData ? "Edição enviada para análise!" : "Novo local enviado para análise!";
+        Alert.alert("Sucesso", msg, [{ text: "OK", onPress: () => navigation.navigate('MapPage') }]);
     }
 
     return (
         <View style={styles.container}>
+
+            <Text style={[styles.softTitle, { color: theme.colors.onSurfaceVariant }]}>
+                {initialData ? 'Sugerir Edição para o Local' : 'Sugerir Adição de Local'}
+            </Text>
+
             <View style={[styles.card, { backgroundColor: theme.colors.surfaceContainerLow }]}>
 
-                {/* 2. Aplicando o paperInputTheme */}
                 <TextInput
                     mode="outlined"
                     label="Nome do Local *"
-                    placeholder="Ex: Biblioteca Municipal"
                     value={nome}
                     onChangeText={setNome}
                     style={styles.input}
                     theme={paperInputTheme}
                     outlineColor={theme.colors.outlineVariant}
                     activeOutlineColor={theme.colors.primary}
-                    textColor={theme.colors.onSurface}
                 />
 
                 <TextInput
                     mode="outlined"
                     label="Localização *"
-                    placeholder="Endereço ou coordenadas"
                     value={localizacao}
                     onChangeText={setLocalizacao}
                     style={styles.input}
                     theme={paperInputTheme}
                     outlineColor={theme.colors.outlineVariant}
                     activeOutlineColor={theme.colors.primary}
-                    textColor={theme.colors.onSurface}
                     right={loadingCoords ? <TextInput.Icon icon={() => <ActivityIndicator size="small" color={theme.colors.primary} />} /> : null}
                 />
 
@@ -172,18 +151,13 @@ export function AddPlaceForm({ initialCoordinate, initialData }) {
                     {tiposAcessibilidade.map((item) => (
                         <Chip
                             key={item.value}
-                            mode="flat"
                             selected={tipo === item.value}
-                            showSelectedOverlay 
                             onPress={() => setTipo(item.value)}
                             style={[
                                 styles.chip,
                                 { backgroundColor: tipo === item.value ? theme.colors.primaryContainer : theme.colors.surfaceVariant }
                             ]}
-                            textStyle={{ 
-                                color: tipo === item.value ? theme.colors.onPrimaryContainer : theme.colors.onSurfaceVariant,
-                                fontWeight: 'bold' 
-                            }}
+                            textStyle={{ color: tipo === item.value ? theme.colors.onPrimaryContainer : theme.colors.onSurfaceVariant }}
                         >
                             {item.label}
                         </Chip>
@@ -192,31 +166,25 @@ export function AddPlaceForm({ initialCoordinate, initialData }) {
 
                 <TextInput
                     mode="outlined"
-                    label="Categoria do Local"
-                    placeholder="Ex: Saúde, Lazer, Educação..."
+                    label="Categoria"
                     value={categoria}
                     onChangeText={setCategoria}
                     style={styles.input}
                     theme={paperInputTheme}
-                    outlineColor={theme.colors.outlineVariant}
-                    activeOutlineColor={theme.colors.primary}
-                    textColor={theme.colors.onSurface}
                 />
 
                 <TextInput
                     mode="outlined"
                     label="Recursos Presentes *"
-                    placeholder="Ex: Rampas, Placas em Braille..."
                     value={recursos}
                     onChangeText={setRecursos}
                     style={styles.input}
                     theme={paperInputTheme}
                     outlineColor={theme.colors.outlineVariant}
                     activeOutlineColor={theme.colors.primary}
-                    textColor={theme.colors.onSurface}
                 />
 
-                <Text style={[styles.photoLabel, { color: theme.colors.onSurface }]}>Adicionar Foto (Opcional)</Text>
+                <Text style={[styles.photoLabel, { color: theme.colors.onSurface }]}>Foto do Local</Text>
                 <View style={styles.imageSection}>
                     {image ? (
                         <View style={styles.previewContainer}>
@@ -239,16 +207,12 @@ export function AddPlaceForm({ initialCoordinate, initialData }) {
                 <TextInput
                     mode="outlined"
                     label="Descrição"
-                    placeholder="Detalhes adicionais..."
                     multiline
                     numberOfLines={4}
                     value={descricao}
                     onChangeText={setDescricao}
                     style={styles.input}
                     theme={paperInputTheme}
-                    outlineColor={theme.colors.outlineVariant}
-                    activeOutlineColor={theme.colors.primary}
-                    textColor={theme.colors.onSurface}
                 />
 
                 <Button
@@ -257,10 +221,8 @@ export function AddPlaceForm({ initialCoordinate, initialData }) {
                     buttonColor={theme.colors.primary}
                     textColor={theme.colors.onPrimary}
                     style={styles.saveButton}
-                    contentStyle={styles.saveButtonContent}
-                    labelStyle={styles.saveButtonText}
                 >
-                    {initialData ? "Enviar solicitação de edição" : "Enviar solicitação de adição"}
+                    {initialData ? "Confirmar Edição" : "Salvar Local"}
                 </Button>
 
             </View>
@@ -272,19 +234,24 @@ const styles = StyleSheet.create({
     container: {
         width: '100%',
         paddingHorizontal: 16,
+        paddingTop: 10,
         marginBottom: 20,
+    },
+    softTitle: {
+        fontSize: 18,
+        fontWeight: '500',
+        marginBottom: 15,
+        textAlign: 'center',
+        letterSpacing: 0.5,
     },
     card: {
         borderRadius: 24,
         padding: 24,
         width: '100%',
         elevation: 2,
-        shadowColor: "#000",
-        shadowOpacity: 0.05,
-        shadowOffset: { width: 0, height: 2 },
     },
     input: {
-        marginBottom: 16, 
+        marginBottom: 16,
     },
     chipLabel: {
         fontSize: 14,
@@ -299,7 +266,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     chip: {
-        borderRadius: 8, 
+        borderRadius: 8,
     },
     photoLabel: {
         fontSize: 14,
@@ -340,13 +307,6 @@ const styles = StyleSheet.create({
     },
     saveButton: {
         marginTop: 10,
-        borderRadius: 100, 
-    },
-    saveButtonContent: {
-        paddingVertical: 8,
-    },
-    saveButtonText: {
-        fontSize: 16,
-        fontWeight: 'bold',
+        borderRadius: 100,
     },
 });

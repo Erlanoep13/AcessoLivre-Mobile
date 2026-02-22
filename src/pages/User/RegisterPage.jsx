@@ -73,7 +73,7 @@ export function RegisterPage() {
                                 />
 
                                 <Text style={[styles.helperText, { color: theme.colors.onSurfaceVariant }]}>
-                                    Ao clicar em gerar, você receberá sua chave de acesso provisória.
+                                    Ao clicar em gerar, você receberá sua chave de acesso. Anote-a para não esquecer
                                 </Text>
 
                                 <TouchableOpacity

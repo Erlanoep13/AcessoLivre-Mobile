@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import { View, Text, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { useUser } from '../contexts/UserContext';
@@ -89,8 +89,8 @@ export function LoginForm() {
         {/* 3. Input de Senha da Paper (com ícone embutido) */}
         <TextInput
           mode="outlined"
-          label="Sua Senha"
-          placeholder="Sua senha"
+          label="Sua Chave de Acesso"
+          placeholder="Sua Chave de Acesso"
           secureTextEntry={!mostrarSenha}
           value={chaveAcesso}
           onChangeText={setChaveAcesso}
@@ -99,9 +99,9 @@ export function LoginForm() {
           activeOutlineColor={theme.colors.primary}
           style={[styles.input, { backgroundColor: theme.colors.surfaceVariant, marginBottom: 30 }]}
           right={
-            <TextInput.Icon 
-              icon={mostrarSenha ? "eye-off" : "eye"} 
-              onPress={() => setMostrarSenha(!mostrarSenha)} 
+            <TextInput.Icon
+              icon={mostrarSenha ? "eye-off" : "eye"}
+              onPress={() => setMostrarSenha(!mostrarSenha)}
               color={theme.colors.onSurfaceVariant}
             />
           }
@@ -123,14 +123,14 @@ export function LoginForm() {
       </View>
 
       {/* 5. Botão de Criar Conta */}
-      <Button
-        mode="text"
-        textColor={theme.colors.primary}
-        onPress={() => navigation.navigate('Register')}
+      <TouchableOpacity
         style={styles.createAccountContainer}
+        onPress={() => navigation.navigate('Register')}
       >
-        Não tem uma conta? Criar conta
-      </Button>
+        <Text style={[styles.linkText, { color: theme.colors.onSurfaceVariant }]}>
+          Não tem uma conta? <Text style={{ color: theme.colors.primary, fontWeight: 'bold' }}>Criar Conta</Text>
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }

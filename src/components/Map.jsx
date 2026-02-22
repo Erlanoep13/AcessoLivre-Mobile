@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, Modal, Alert, Image } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
-// Trocamos a biblioteca Feather pela oficial do Material Design
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PLACES_DATA } from '../data/places';
 import { RemoveModal } from './RemoveModal';
 import { useTheme } from '../contexts/ThemeContext';
@@ -15,7 +15,6 @@ const INITIAL_REGION = {
     longitudeDelta: 0.015,
 };
 
-// JSON de configuração para o Modo Escuro do Google Maps
 const mapDarkStyle = [
     { "elementType": "geometry", "stylers": [{ "color": "#212121" }] },
     { "elementType": "labels.icon", "stylers": [{ "visibility": "off" }] },
@@ -27,7 +26,6 @@ const mapDarkStyle = [
     { "featureType": "water", "elementType": "geometry", "stylers": [{ "color": "#000000" }] }
 ];
 
-// INTACTO: Os marcadores do mapa não foram alterados!
 const MARKER_ICONS = {
     'Motora': require('../../assets/markers/IconeMotora.png'),
     'Visual': require('../../assets/markers/IconeVisual.png'),
@@ -42,7 +40,6 @@ const getMarkerImage = (tipo) => {
     return MARKER_ICONS[tipo] || MARKER_ICONS['default'];
 };
 
-// Adicionamos as propriedades "icon" para exibir os símbolos do M3 na legenda
 const LEGEND_ITEMS = [
     { color: "#ff0100", label: "Deficiência Motora", icon: "accessible" },
     { color: "#69ee0c", label: "Deficiência Visual", icon: "blind" },
@@ -53,6 +50,7 @@ const LEGEND_ITEMS = [
 export function Map() {
     const navigation = useNavigation();
     const { theme, isDark } = useTheme();
+    const insets = useSafeAreaInsets(); // Obtendo as margens do sistema
 
     const [isFullScreen, setIsFullScreen] = useState(false);
     const [tempMarker, setTempMarker] = useState(null);
@@ -93,7 +91,6 @@ export function Map() {
                 onPress={handleMapPress}
                 customMapStyle={isDark ? mapDarkStyle : []}
             >
-                {/* INTACTO: Renderização dos marcadores originais */}
                 {PLACES_DATA.map((place) => (
                     <Marker
                         key={place.id}
@@ -117,7 +114,6 @@ export function Map() {
                 )}
             </MapView>
 
-            {/* CARD DE DETALHES DO MARCADOR */}
             {selectedMarker && (
                 <View style={styles.floatingCardContainer}>
                     <View style={[styles.cardContent, { backgroundColor: theme.colors.surface, borderColor: theme.colors.outline }]}>
@@ -159,7 +155,6 @@ export function Map() {
                 </View>
             )}
 
-            {/* CARD DE CONFIRMAÇÃO DE ADIÇÃO */}
             {tempMarker && (
                 <View style={styles.floatingCardContainer}>
                     <View style={[styles.addPlaceCard, { backgroundColor: theme.colors.surface, borderColor: theme.colors.outline }]}>
@@ -176,9 +171,15 @@ export function Map() {
                 </View>
             )}
 
-            {/* Botão Tela Cheia Atualizado */}
             <TouchableOpacity
-                style={[styles.fullscreenButton, { backgroundColor: theme.colors.primary }]}
+                style={[
+                    styles.fullscreenButton,
+                    {
+                        backgroundColor: theme.colors.primary,
+                        // Ajuste dinâmico: se houver barra de sistema, sobe o botão
+                        bottom: 10 + (isFull ? insets.bottom : 0)
+                    }
+                ]}
                 onPress={() => setIsFullScreen(!isFullScreen)}
             >
                 <MaterialIcons name={isFull ? "fullscreen-exit" : "fullscreen"} size={26} color={theme.colors.onPrimary} />
@@ -190,13 +191,11 @@ export function Map() {
         <View style={[styles.wrapper, { backgroundColor: theme.colors.surface, borderColor: theme.colors.outline }]}>
             <View style={styles.container}>{renderMapView(false)}</View>
 
-            {/* LEGENDA ATUALIZADA COM ÍCONES M3 */}
             <View style={[styles.legendContainer, { backgroundColor: theme.colors.surfaceVariant }]}>
                 <Text style={[styles.legendTitle, { color: theme.colors.onSurfaceVariant }]}>Suporte a:</Text>
                 <View style={styles.legendGrid}>
                     {LEGEND_ITEMS.map((item, index) => (
                         <View key={index} style={styles.legendItem}>
-                            {/* Pontinho colorido substituído pelo ícone representativo */}
                             <MaterialIcons name={item.icon} size={18} color={item.color} style={styles.legendIcon} />
                             <Text style={[styles.legendText, { color: theme.colors.onSurface }]}>{item.label}</Text>
                         </View>
@@ -221,7 +220,7 @@ const styles = StyleSheet.create({
     wrapper: { marginBottom: 15, borderRadius: 8, overflow: 'hidden', elevation: 3, borderWidth: 0.5 },
     container: { height: 410, width: '100%' },
     map: { width: '100%', height: '100%' },
-    fullscreenButton: { position: 'absolute', bottom: 10, left: 10, padding: 8, borderRadius: 8, elevation: 5 },
+    fullscreenButton: { position: 'absolute', left: 10, padding: 8, borderRadius: 8, elevation: 5 },
     fullscreenContainer: { flex: 1 },
     floatingCardContainer: { position: 'absolute', top: 20, left: 20, right: 20, alignItems: 'center', zIndex: 10 },
     cardContent: { borderRadius: 12, padding: 16, width: '100%', elevation: 5, borderWidth: 0.5 },
